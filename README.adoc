@@ -6,9 +6,13 @@ The repository is set up based on the use of the community edition of https://ww
 
 == Current Status
 
+The grammars here are derived from the older ADL2 reference grammars in yacc/lex, on which the ADL Workbench is based.
+
 The grammars provided so far cover ODIN, and ADL, with the latter including CADL, RULES, and a https://github.com/bkiers/pcre-parser[3rd Party PCRE grammar] for regex matching, as used in ADL's slots and also C_STRING constraints.
 
 The grammars have been lightly tested with various ODIN, CADL and ADL texts, but are by no means comprehensively tested.
+
+NOTE: there is currently another Antlr4 grammar for ADL2, developed as a migration from an earlier Antlr3 grammar, used in the https://github.com/openEHR/adl2-core/tree/master/adl-parser/src/main/antlr4[adl2-core] project and components based on it. We are working to bring this grammar and the ones published here together in a single harmonised form.
 
 == Relationship to Grammars Published in openEHR Specifications
 
@@ -17,4 +21,16 @@ Any corrections to the grammars here should be copied to the locations of the pu
 * ODIN and base_patterns: https://github.com/openEHR/specifications-BASE/tree/master/computable/grammar[specifications-BASE]
 * ADL: https://github.com/openEHR/specifications-AM/tree/master/computable/grammar[specifications-AM] 
 
+== Development Plan
 
+There are various goals for this project:
+
+* achieve definitive testing of the grammars published here, with at least the set of test archetypes in adl-archetypes;
+* harmonise with the other adl2-core Antl4 grammar mentioned above;
+* build out the grammars to a full 'listener' based component that cen be plugged into any Java tool development.
+
+Other suggestions are welcome.
+
+== Support and Queries
+
+Please post on the https://github.com/openEHR/adl-antlr/issues[Git issue tracker].
