@@ -1,0 +1,20 @@
+= adl-antlr - Antlr Grammar Forge for ADL
+
+This repository contains Antlr4 grammars and related resources for ADL. Currently this is limited to ADL2, but can be extended to ADL 1.4 as needed.
+
+The repository is set up based on the use of the community edition of https://www.jetbrains.com/idea/download/[IntelliJ IDEA], with the https://github.com/antlr/intellij-plugin-v4[Antlr4 plugin]. The plugin should be downloaded, and imported via the IntelliJ plugin manager from the IDE.
+
+== Current Status
+
+The grammars provided so far cover ODIN, and ADL, with the latter including CADL, RULES, and a https://github.com/bkiers/pcre-parser[3rd Party PCRE grammar] for regex matching, as used in ADL's slots and also C_STRING constraints.
+
+The grammars have been lightly tested with various ODIN, CADL and ADL texts, but are by no means comprehensively tested.
+
+== Relationship to Grammars Published in openEHR Specifications
+
+Any corrections to the grammars here should be copied to the locations of the published versions in the various git repositories:
+
+* ODIN and base_patterns: https://github.com/openEHR/specifications-BASE/tree/master/computable/grammar[specifications-BASE]
+* ADL: https://github.com/openEHR/specifications-AM/tree/master/computable/grammar[specifications-AM] 
+
+
