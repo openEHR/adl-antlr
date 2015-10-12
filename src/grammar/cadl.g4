@@ -10,10 +10,12 @@ grammar cadl;
 import adl_rules;
 
 //
-//  ======================= Parser rules ========================
+//  ======================= Top-level Objects ========================
 //
 
 c_complex_object: type_id '[' ( ROOT_ID_CODE | ID_CODE ) ']' c_occurrences? ( SYM_MATCHES '{' c_attribute_def+ '}' )? ;
+
+// ======================== Components =======================
 
 c_objects: ( sibling_order? c_non_primitive_object+ ) | c_primitive_object ;
 
@@ -69,32 +71,3 @@ multiplicity_mod: ordering_mod | unique_mod ;
 c_occurrences: SYM_OCCURRENCES SYM_MATCHES '{' multiplicity '}' ;
 
 multiplicity: INTEGER | '*' | INTEGER SYM_INTERVAL_SEP ( INTEGER | '*' ) ;
-
-//
-//  ======================= Lexical rules ========================
-//
-
-
-// ---------- various ADL2 codes
-
-ROOT_ID_CODE : 'id1' ('.1')* ;
-ID_CODE      : 'id' CODE_STR ;
-AT_CODE      : 'at' CODE_STR ;
-AC_CODE      : 'ac' CODE_STR ;
-fragment CODE_STR : ('0' | [1-9][0-9]*) ( '.' ('0' | [1-9][0-9]* ))* ;
-
-// ---------- ISO8601-based date/time/duration constraint patterns
-
-DATE_CONSTRAINT_PATTERN :       YEAR_PATTERN '-' MONTH_PATTERN '-' DAY_PATTERN ;
-TIME_CONSTRAINT_PATTERN :       HOUR_PATTERN ':' MINUTE_PATTERN ':' SECOND_PATTERN ;
-DATE_TIME_CONSTRAINT_PATTERN :  DATE_CONSTRAINT_PATTERN 'T' TIME_CONSTRAINT_PATTERN ;
-DURATION_CONSTRAINT_PATTERN :   'P' [yY]?[mM]?[Ww]?[dD]? ('T' [hH]?[mM]?[sS]?)? ;
-
-// date time pattern
-fragment YEAR_PATTERN:	 		('yyy' 'y'?) | ('YYY' 'Y'?);
-fragment MONTH_PATTERN:	        'mm' | 'MM' | '??' | 'XX';
-fragment DAY_PATTERN:			'dd' | 'DD' | '??' | 'XX';
-fragment HOUR_PATTERN:			'hh' | 'HH' | '??' | 'XX';
-fragment MINUTE_PATTERN:	    'mm' | 'MM' | '??' | 'XX';
-fragment SECOND_PATTERN:		'ss' | 'SS' | '??' | 'XX';
-

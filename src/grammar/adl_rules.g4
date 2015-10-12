@@ -13,7 +13,7 @@ import cadl_primitives;
 //  ============== Parser rules ==============
 //
 
-assertion: ( PROPER_ID ':' )? boolean_expr ;
+assertion: ( identifier ':' )? boolean_expr ;
 
 //
 // Expressions evaluating to boolean values

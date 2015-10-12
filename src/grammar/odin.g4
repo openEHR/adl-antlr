@@ -27,7 +27,7 @@ object_block :
     | object_reference_block
     ;
 
-object_value_block : ( '(' type_id ')' )? '<' ( attr_vals? | keyed_object* | primitive_object ) '>' ;
+object_value_block : ( '(' type_id ')' )? '<' ( primitive_object | attr_vals? | keyed_object* ) '>' ;
 
 keyed_object : '[' primitive_value ']' '=' object_block ; // TODO: probably should limit to String and Integer?
 

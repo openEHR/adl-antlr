@@ -49,14 +49,14 @@ c_string:
     ;
 
 // ADL2 term types: [ac3], [ac3; at5], [at5]
-c_terminology_code: '[' AC_CODE ( ';' AT_CODE ) | AT_CODE ']' ;
+c_terminology_code: '[' ( ( AC_CODE ( ';' AT_CODE )? ) | AT_CODE ) ']' ;
 
 c_boolean: ( boolean_value | boolean_list_value ) ( ';' boolean_value )? ;
 
 adl_path : adl_path_segment+ ;
 adl_relative_path : adl_path_element adl_path ;  // TODO: remove when current slots no longer needed
-adl_path_segment : '/' adl_path_element ;
-adl_path_element : attribute_id ( '[' ID_CODE ']' )? ;
+adl_path_segment  : '/' adl_path_element ;
+adl_path_element  : attribute_id ( '[' ID_CODE ']' )? ;
 
 
 //
@@ -65,9 +65,10 @@ adl_path_element : attribute_id ( '[' ID_CODE ']' )? ;
 
 // ---------- various ADL2 codes
 
-ID_CODE        : 'id' CODE_STR ;
-AT_CODE        : 'at' CODE_STR ;
-AC_CODE        : 'ac' CODE_STR ;
+ROOT_ID_CODE : 'id1' ('.1')* ;
+ID_CODE      : 'id' CODE_STR ;
+AT_CODE      : 'at' CODE_STR ;
+AC_CODE      : 'ac' CODE_STR ;
 fragment CODE_STR : ('0' | [1-9][0-9]*) ( '.' ('0' | [1-9][0-9]* ))* ;
 
 // ---------- ISO8601-based date/time/duration constraint patterns

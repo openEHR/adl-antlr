@@ -73,12 +73,12 @@ meta_data: '(' meta_data_item  (';' meta_data_item )* ')' ;
 
 meta_data_item:
       SYM_ADL_VERSION '=' VERSION_ID
-    | SYM_UID '=' ( DOTTED_NUMERIC | GUID )  // TODO: this won't match all Oids properly
-    | SYM_BUILD_UID '=' ( DOTTED_NUMERIC | GUID )
+    | SYM_UID '=' GUID
+    | SYM_BUILD_UID '=' GUID
     | SYM_RM_RELEASE '=' VERSION_ID
     | SYM_IS_CONTROLLED
     | SYM_IS_GENERATED
-    | PROPER_ID  ( '=' ( PROPER_ID | meta_data_value ))?
+    | identifier ( '=' meta_data_value )?
     ;
 
 meta_data_value:

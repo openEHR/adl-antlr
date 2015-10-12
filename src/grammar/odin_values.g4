@@ -5,9 +5,6 @@
 grammar odin_values;
 import base_patterns;
 
-type_id      : ALPHA_UC_ID ( '<' type_id ( ',' type_id )* '>' )? ;
-attribute_id : ALPHA_LC_ID ;
-
 string_value : STRING ;
 string_list_value : string_value ( ( ',' string_value )+ | ',' SYM_LIST_CONTINUE ) ;
 
@@ -65,7 +62,7 @@ duration_interval_value :
     ;
 duration_interval_list_value : duration_interval_value ( ( ',' duration_interval_value )+ | ',' SYM_LIST_CONTINUE ) ;
 
-term_code_value : QUALIFIED_TERM_CODE_REF ;
+term_code_value : TERM_CODE_REF ;
 term_code_list_value : term_code_value ( ( ',' term_code_value )+ | ',' SYM_LIST_CONTINUE ) ;
 
 uri_value : URI ;
