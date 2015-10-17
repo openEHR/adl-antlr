@@ -7,7 +7,7 @@
 //
 
 grammar cadl_primitives;
-import adl_keywords, odin_values, PCRE;
+import adl_keywords, odin_values;
 
 //
 //  ======================= Parser rules ========================
@@ -43,10 +43,13 @@ c_duration: (
 c_string: 
     ( STRING 
     | string_list_value
-    | '/' alternation '/'    // from PCRE grammar
-    | '^' alternation '^'    // from PCRE grammar
+    | '/' regex1 '/'
+    | '^' regex2 '^'
     ) ( ';' string_value )? 
     ;
+
+regex1: ( '\\.' | ~'/' )* ; // process with PCRE grammar
+regex2: ( '\\.' | ~'^' )* ; // process with PCRE grammar
 
 // ADL2 term types: [ac3], [ac3; at5], [at5]
 c_terminology_code: '[' ( ( AC_CODE ( ';' AT_CODE )? ) | AT_CODE ) ']' ;

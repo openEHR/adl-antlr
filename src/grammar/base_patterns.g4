@@ -25,6 +25,7 @@ CMT_LINE :  '--'.*?'\n'   -> skip ;    // (increment line count)
 
 // ---------- ISO8601 Date/Time values ----------
 
+// TODO: consider adding non-standard but unambiguous patterns like YEAR '-' ( MONTH | '??' ) '-' ( DAY | '??' )
 ISO8601_DATE      : YEAR '-' MONTH ( '-' DAY )? ;
 ISO8601_TIME      : HOUR ':' MINUTE ( ':' SECOND ( ',' INTEGER )?)? ( TIMEZONE )? ;
 ISO8601_DATE_TIME : YEAR '-' MONTH '-' DAY 'T' HOUR (':' MINUTE (':' SECOND ( ',' DIGIT+ )?)?)? ( TIMEZONE )? ;
@@ -42,17 +43,22 @@ fragment SECOND   : [0-5][0-9] ;                 // seconds
 // TODO: the following will incorrectly match just 'P'
 ISO8601_DURATION : 'P'(DIGIT+[yY])?(DIGIT+[mM])?(DIGIT+[wW])?(DIGIT+[dD])?('T'(DIGIT+[hH])?(DIGIT+[mM])?(DIGIT+('.'DIGIT+)?[sS])?)? ;
 
+// ------------------- special word symbols --------------
+SYM_TRUE : [Tt][Rr][Uu][Ee] ;
+SYM_FALSE : [Ff][Aa][Ll][Ss][Ee] ;
+
 // ---------------------- Identifiers ---------------------
 
 ARCHETYPE_HRID      : ARCHETYPE_HRID_ROOT '.v' VERSION_ID ;
 ARCHETYPE_REF       : ARCHETYPE_HRID_ROOT '.v' INTEGER ( '.' DIGIT+ )* ;
 ARCHETYPE_HRID_ROOT : (NAMESPACE '::')? IDENTIFIER '-' IDENTIFIER '-' IDENTIFIER '.' IDENTIFIER ;
-
-NAMESPACE           : LABEL ('.' LABEL)+ ;
-fragment LABEL      : ALPHA_CHAR ( NAME_CHAR* ALPHANUM_CHAR )? ;
+VERSION_ID : DIGIT+ '.' DIGIT+ '.' DIGIT+ (('-rc' | '-alpha') ('.' DIGIT+)? )? ;
 fragment IDENTIFIER : ALPHA_CHAR WORD_CHAR* ;
-VERSION_ID : DIGIT+ DOT_SEGMENT DOT_SEGMENT (('-rc' | '-alpha') DOT_SEGMENT? )? ;
-fragment DOT_SEGMENT : '.' DIGIT+ ;
+
+// According to IETF http://tools.ietf.org/html/rfc1034[RFC 1034] and http://tools.ietf.org/html/rfc1035[RFC 1035],
+// as clarified by http://tools.ietf.org/html/rfc2181[RFC 2181] (section 11)
+NAMESPACE      : LABEL ('.' LABEL)+ ;
+fragment LABEL : ALPHA_CHAR ( NAME_CHAR* ALPHANUM_CHAR )? ;
 
 GUID : HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ ;
 
@@ -62,7 +68,7 @@ ALPHA_LC_ID : ALPHA_LCHAR WORD_CHAR* ;                      // used for attribut
 // --------------------- primitive types -------------------
 
 TERM_CODE_REF : '[' NAME_CHAR+ ( '(' NAME_CHAR+ ')' )? '::' NAME_CHAR+ ']' ;  // e.g. [ICD10AM(1998)::F23]; [ISO_639-1::en]
-URI : [a-z]+ ':' ( '//' | '/' )? ~[ \t\n]+? ; // just a simple recogniser, the full thing isn't required
+URI : [a-z]+ ':' ( '//' | '/' )? ~[ \t\n<>]+ ; // just a simple recogniser, the full thing isn't required
 
 INTEGER : DIGIT+ E_SUFFIX? ;
 REAL :    DIGIT+ '.' DIGIT+ E_SUFFIX? ;
@@ -75,9 +81,6 @@ CHARACTER : '\'' CHAR '\'' ;
 fragment CHAR : ~['\\\r\n] | ESCAPE_SEQ | UTF8CHAR  ;
 
 fragment ESCAPE_SEQ: '\\' ['"?abfnrtv\\] ;
-
-SYM_TRUE : [Tt][Rr][Uu][Ee] ;
-SYM_FALSE : [Ff][Aa][Ll][Ss][Ee] ;
 
 // ------------------- character fragments ------------------
 
