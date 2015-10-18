@@ -36,9 +36,9 @@ boolean_leaf:
 boolean_constraint: ( adl_path | adl_relative_path ) SYM_MATCHES '{' c_primitive_object '}' ;
 
 boolean_binop:
-      SYM_OR
     | SYM_AND
     | SYM_XOR
+    | SYM_OR
     | SYM_IMPLIES
     ;
 
@@ -62,6 +62,7 @@ arithmetic_leaf:
     ;
 
 arithmetic_arith_expr: arithmetic_arith_expr arithmetic_binop arithmetic_leaf
+    | arithmetic_arith_expr '^'<assoc=right> arithmetic_leaf
     | arithmetic_leaf
     ;
 
@@ -79,5 +80,4 @@ arithmetic_binop:
     | '*'
     | '+'
     | '-'
-    | '^'
     ;
