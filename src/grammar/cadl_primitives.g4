@@ -46,23 +46,21 @@ c_duration: (
     ;
 assumed_duration_value: ';' duration_value ;
 
-c_string: 
-    ( STRING 
-    | string_list_value
-    | '/' regex1 '/'
-    | '^' regex2 '^'
-    ) ( ';' string_value )? 
-    ;
+// for REGEX: strip first and last char, and then process with PCRE grammar
+c_string: ( STRING | string_list_value | regex_constraint ) assumed_string_value? ;
+assumed_string_value: ';' string_value ;
+regex_constraint: '/' regex1 '/' | '^' regex2 '^' ;
+regex1: ( '_' | '\\.' | '\\' | ~'/' )+ ; // TODO: not clear first 3 matches are needed, but they work.
+regex2: ( '_' | '\\.' | '\\' | ~'^' )+ ;
 
-regex1: ( '\\.' | ~'/' )* ; // process with PCRE grammar
-regex2: ( '\\.' | ~'^' )* ; // process with PCRE grammar
 
 // ADL2 term types: [ac3], [ac3; at5], [at5]
 c_terminology_code: '[' ( ( AC_CODE ( ';' AT_CODE )? ) | AT_CODE ) ']' ;
 
-c_boolean: ( boolean_value | boolean_list_value ) ( ';' boolean_value )? ;
+c_boolean: ( boolean_value | boolean_list_value ) assumed_boolean_value? ;
+assumed_boolean_value: ';' boolean_value ;
 
-adl_path : adl_path_segment+ ;
+adl_path          : adl_path_segment+ ;
 adl_relative_path : adl_path_element adl_path ;  // TODO: remove when current slots no longer needed
 adl_path_segment  : '/' adl_path_element ;
 adl_path_element  : attribute_id ( '[' ID_CODE ']' )? ;
@@ -72,7 +70,7 @@ adl_path_element  : attribute_id ( '[' ID_CODE ']' )? ;
 //  ======================= Lexical rules ========================
 //
 
-// ---------- various ADL2 codes
+// ---------- various ADL2 codes -------
 
 ROOT_ID_CODE : 'id1' ('.1')* ;
 ID_CODE      : 'id' CODE_STR ;
