@@ -25,20 +25,26 @@ c_primitive_object:
     | c_boolean
     ;
 
-c_integer: ( integer_value | integer_list_value | integer_interval_value | integer_interval_list_value ) ( ';' integer_value )? ;
+c_integer: ( integer_value | integer_list_value | integer_interval_value | integer_interval_list_value ) assumed_integer_value? ;
+assumed_integer_value: ';' integer_value ;
 
-c_real: ( real_value | real_list_value | real_interval_value | real_interval_list_value ) ( ';' real_value )? ;
+c_real: ( real_value | real_list_value | real_interval_value | real_interval_list_value ) assumed_real_value? ;
+assumed_real_value: ';' real_value ;
 
-c_date: ( DATE_CONSTRAINT_PATTERN | date_value | date_list_value | date_interval_value | date_interval_list_value ) ( ';' date_value )? ;
+c_date: ( DATE_CONSTRAINT_PATTERN | date_value | date_list_value | date_interval_value | date_interval_list_value ) assumed_date_value? ;
+assumed_date_value: ';' date_value ;
 
-c_time: ( TIME_CONSTRAINT_PATTERN | time_value | time_list_value | time_interval_value | time_interval_list_value ) ( ';' time_value )? ;
+c_time: ( TIME_CONSTRAINT_PATTERN | time_value | time_list_value | time_interval_value | time_interval_list_value ) assumed_time_value? ;
+assumed_time_value: ';' time_value ;
 
-c_date_time: ( DATE_TIME_CONSTRAINT_PATTERN | date_time_value | date_time_list_value | date_time_interval_value | date_time_interval_list_value ) ( ';' date_time_value )? ;
+c_date_time: ( DATE_TIME_CONSTRAINT_PATTERN | date_time_value | date_time_list_value | date_time_interval_value | date_time_interval_list_value ) assumed_date_time_value? ;
+assumed_date_time_value: ';' date_time_value ;
 
 c_duration: (
       DURATION_CONSTRAINT_PATTERN ( '/' ( duration_interval_value | duration_value ))?
-    | duration_value | duration_list_value | duration_interval_value | duration_interval_list_value ) ( ';' duration_value )?
+    | duration_value | duration_list_value | duration_interval_value | duration_interval_list_value ) assumed_duration_value?
     ;
+assumed_duration_value: ';' duration_value ;
 
 c_string: 
     ( STRING 
