@@ -50,8 +50,8 @@ assumed_duration_value: ';' duration_value ;
 c_string: ( STRING | string_list_value | regex_constraint ) assumed_string_value? ;
 assumed_string_value: ';' string_value ;
 regex_constraint: '/' regex1 '/' | '^' regex2 '^' ;
-regex1: ( '_' | '\\.' | '\\' | ~'/' )+ ; // TODO: not clear first 3 matches are needed, but they work.
-regex2: ( '_' | '\\.' | '\\' | ~'^' )+ ;
+regex1: ( '_' | '.*' | '\\.' | '\\/' | ~'/' )+ ; // TODO: not clear why first 3 matches are needed, but they work.
+regex2: ( '_' | '.*' | '\\.' | '\\/' | ~'^' )+ ;
 
 
 // ADL2 term types: [ac3], [ac3; at5], [at5]
@@ -80,16 +80,16 @@ fragment CODE_STR : ('0' | [1-9][0-9]*) ( '.' ('0' | [1-9][0-9]* ))* ;
 
 // ---------- ISO8601-based date/time/duration constraint patterns
 
-DATE_CONSTRAINT_PATTERN :       YEAR_PATTERN '-' MONTH_PATTERN '-' DAY_PATTERN ;
-TIME_CONSTRAINT_PATTERN :       HOUR_PATTERN ':' MINUTE_PATTERN ':' SECOND_PATTERN ;
-DATE_TIME_CONSTRAINT_PATTERN :  DATE_CONSTRAINT_PATTERN 'T' TIME_CONSTRAINT_PATTERN ;
-DURATION_CONSTRAINT_PATTERN :   'P' [yY]?[mM]?[Ww]?[dD]? ('T' [hH]?[mM]?[sS]?)? ;
+DATE_CONSTRAINT_PATTERN      : YEAR_PATTERN '-' MONTH_PATTERN '-' DAY_PATTERN ;
+TIME_CONSTRAINT_PATTERN      : HOUR_PATTERN ':' MINUTE_PATTERN ':' SECOND_PATTERN ;
+DATE_TIME_CONSTRAINT_PATTERN : DATE_CONSTRAINT_PATTERN 'T' TIME_CONSTRAINT_PATTERN ;
+DURATION_CONSTRAINT_PATTERN  : 'P' [yY]?[mM]?[Ww]?[dD]? ( 'T' [hH]?[mM]?[sS]? )? ;
 
 // date time pattern
-fragment YEAR_PATTERN:	 		('yyy' 'y'?) | ('YYY' 'Y'?);
-fragment MONTH_PATTERN:	        'mm' | 'MM' | '??' | 'XX';
-fragment DAY_PATTERN:			'dd' | 'DD' | '??' | 'XX';
-fragment HOUR_PATTERN:			'hh' | 'HH' | '??' | 'XX';
-fragment MINUTE_PATTERN:	    'mm' | 'MM' | '??' | 'XX';
-fragment SECOND_PATTERN:		'ss' | 'SS' | '??' | 'XX';
+fragment YEAR_PATTERN   : ( 'yyy' 'y'? ) | ( 'YYY' 'Y'? ) ;
+fragment MONTH_PATTERN  : 'mm' | 'MM' | '??' | 'XX' ;
+fragment DAY_PATTERN    : 'dd' | 'DD' | '??' | 'XX' ;
+fragment HOUR_PATTERN   : 'hh' | 'HH' | '??' | 'XX' ;
+fragment MINUTE_PATTERN : 'mm' | 'MM' | '??' | 'XX' ;
+fragment SECOND_PATTERN : 'ss' | 'SS' | '??' | 'XX' ;
 
