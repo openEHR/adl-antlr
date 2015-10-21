@@ -20,10 +20,10 @@ archetype_ref : ARCHETYPE_HRID | ARCHETYPE_REF ;
 
 // ---------- whitespace & comments ----------
 
-WS :        [ \t\r]+      -> skip ;
-LINE :      '\n'          -> skip ;    // increment line count
-HLINE :     '--------------------*' ;  // special comment line used as a horizontal separator
-CMT_LINE :  '--'.*?'\n'   -> skip ;    // (increment line count)
+WS :         [ \t\r]+    -> skip ;
+LINE :       '\n'        -> skip ;     // increment line count
+H_CMT_LINE : '--------' '-'*? '\n'  ;  // special type of comment for splitting template overlays
+CMT_LINE :   '--' .*? '\n'  -> skip ;  // (increment line count)
 
 // ---------- ISO8601 Date/Time values ----------
 
@@ -53,7 +53,7 @@ SYM_FALSE : [Ff][Aa][Ll][Ss][Ee] ;
 
 ARCHETYPE_HRID      : ARCHETYPE_HRID_ROOT '.v' VERSION_ID ;
 ARCHETYPE_REF       : ARCHETYPE_HRID_ROOT '.v' INTEGER ( '.' DIGIT+ )* ;
-fragment ARCHETYPE_HRID_ROOT : (NAMESPACE '::')? IDENTIFIER '-' IDENTIFIER '-' IDENTIFIER '.' IDENTIFIER ;
+fragment ARCHETYPE_HRID_ROOT : (NAMESPACE '::')? IDENTIFIER '-' IDENTIFIER '-' IDENTIFIER '.' LABEL ;
 VERSION_ID : DIGIT+ '.' DIGIT+ '.' DIGIT+ ( ( '-rc' | '-alpha' ) ( '.' DIGIT+ )? )? ;
 fragment IDENTIFIER : ALPHA_CHAR WORD_CHAR* ;
 

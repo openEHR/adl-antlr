@@ -37,7 +37,7 @@ template:
     rules_section?
     terminology_section
     annotations_section?
-    (HLINE template_overlay)*
+    (H_CMT_LINE template_overlay)*
     ;
 
 template_overlay: 
