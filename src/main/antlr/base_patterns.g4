@@ -77,7 +77,7 @@ REAL :    DIGIT+ '.' DIGIT+ E_SUFFIX? ;
 fragment E_SUFFIX : [eE][+-]? DIGIT+ ;
 
 STRING : '"' STRING_CHAR*? '"' ;
-fragment STRING_CHAR : ~["\\\r\n] | ESCAPE_SEQ | UTF8CHAR ;
+fragment STRING_CHAR : ~["\\] | ESCAPE_SEQ | UTF8CHAR ; // strings can be multi-line
 
 CHARACTER : '\'' CHAR '\'' ;
 fragment CHAR : ~['\\\r\n] | ESCAPE_SEQ | UTF8CHAR  ;
