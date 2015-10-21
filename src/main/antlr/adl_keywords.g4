@@ -23,14 +23,6 @@ SYM_TERMINOLOGY : '\n'[Tt][Ee][Rr][Mm][Ii][Nn][Oo][Ll][Oo][Gg][Yy] ;
 SYM_ANNOTATIONS : '\n'[Aa][Nn][Nn][Oo][Tt][Aa][Tt][Ii][Oo][Nn][Ss] ;
 SYM_COMPONENT_TERMINOLOGIES : '\n'[Cc][Oo][Mm][Pp][Oo][Nn][Ee][Nn][Tt]'_'[Tt][Ee][Rr][Mm][Ii][Nn][Oo][Ll][Oo][Gg][Ii][Ee][Ss] ;
 
-// meta-data keywords
-SYM_ADL_VERSION     : [Aa][Dd][Ll]'_'[Vv][Ee][Rr][Ss][Ii][Oo][Nn] ;
-SYM_RM_RELEASE      : [Rr][Mm]'_'[Rr][Ee][Ll][Ee][Aa][Ss][Ee] ;
-SYM_IS_CONTROLLED   : [Cc][Oo][Nn][Nn][Tt][Rr][Oo][Ll][Ll][Ee][Dd] ;
-SYM_IS_GENERATED    : [Gg][Ee][Nn][Ee][Rr][Aa][Tt][Ee][Dd] ;
-SYM_UID             : [Uu][Ii][Dd] ;
-SYM_BUILD_UID       : [Bb][Uu][Ii][Ll][Dd]'_'[Uu][Ii][Dd] ;
-
 // CADL keywords
 SYM_EXISTENCE   : [Ee][Xx][Ii][Ss][Tt][Ee][Nn][Cc][Ee] ;
 SYM_OCCURRENCES : [Oo][Cc][Cc][Uu][Rr][Rr][Ee][Nn][Cc][Ee][Ss] ;

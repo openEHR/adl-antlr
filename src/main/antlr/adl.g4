@@ -72,12 +72,12 @@ component_terminologies_section: SYM_COMPONENT_TERMINOLOGIES odin_text ;
 meta_data: '(' meta_data_item  (';' meta_data_item )* ')' ;
 
 meta_data_item:
-      SYM_ADL_VERSION '=' VERSION_ID
-    | SYM_UID '=' GUID
-    | SYM_BUILD_UID '=' GUID
-    | SYM_RM_RELEASE '=' VERSION_ID
-    | SYM_IS_CONTROLLED
-    | SYM_IS_GENERATED
+      'adl_version' '=' VERSION_ID
+    | 'uid' '=' GUID
+    | 'build_uid' '=' GUID
+    | 'rm_release' '=' VERSION_ID
+    | 'is_controlled'
+    | 'is_generated'
     | identifier ( '=' meta_data_value )?
     ;
 
