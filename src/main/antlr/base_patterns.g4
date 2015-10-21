@@ -59,7 +59,7 @@ fragment IDENTIFIER : ALPHA_CHAR WORD_CHAR* ;
 
 // According to IETF http://tools.ietf.org/html/rfc1034[RFC 1034] and http://tools.ietf.org/html/rfc1035[RFC 1035],
 // as clarified by http://tools.ietf.org/html/rfc2181[RFC 2181] (section 11)
-NAMESPACE      : LABEL ('.' LABEL)+ ;
+fragment NAMESPACE      : LABEL ('.' LABEL)+ ;
 fragment LABEL : ALPHA_CHAR ( NAME_CHAR* ALPHANUM_CHAR )? ;
 
 GUID : HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ ;
