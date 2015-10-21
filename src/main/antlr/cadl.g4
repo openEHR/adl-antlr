@@ -17,9 +17,11 @@ c_complex_object: type_id '[' ( ROOT_ID_CODE | ID_CODE ) ']' c_occurrences? ( SY
 
 // ======================== Components =======================
 
-c_objects: ( sibling_order? c_non_primitive_object+ ) | c_primitive_object ;
+c_objects: c_non_primitive_object_ordered+ | c_primitive_object ;
 
 sibling_order: ( SYM_AFTER | SYM_BEFORE ) '[' ID_CODE ']' ;
+
+c_non_primitive_object_ordered: sibling_order? c_non_primitive_object ;
 
 c_non_primitive_object:
       c_complex_object
