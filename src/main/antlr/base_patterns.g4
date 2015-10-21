@@ -12,6 +12,8 @@ type_id      : ALPHA_UC_ID ( '<' type_id ( ',' type_id )* '>' )? ;
 attribute_id : ALPHA_LC_ID ;
 identifier   : ALPHA_UC_ID | ALPHA_LC_ID ;
 
+archetype_ref : ARCHETYPE_HRID | ARCHETYPE_REF ;
+
 //
 // -------------------------- Lexer patterns --------------------------
 //
@@ -51,8 +53,8 @@ SYM_FALSE : [Ff][Aa][Ll][Ss][Ee] ;
 
 ARCHETYPE_HRID      : ARCHETYPE_HRID_ROOT '.v' VERSION_ID ;
 ARCHETYPE_REF       : ARCHETYPE_HRID_ROOT '.v' INTEGER ( '.' DIGIT+ )* ;
-ARCHETYPE_HRID_ROOT : (NAMESPACE '::')? IDENTIFIER '-' IDENTIFIER '-' IDENTIFIER '.' IDENTIFIER ;
-VERSION_ID : DIGIT+ '.' DIGIT+ '.' DIGIT+ (('-rc' | '-alpha') ('.' DIGIT+)? )? ;
+fragment ARCHETYPE_HRID_ROOT : (NAMESPACE '::')? IDENTIFIER '-' IDENTIFIER '-' IDENTIFIER '.' IDENTIFIER ;
+VERSION_ID : DIGIT+ '.' DIGIT+ '.' DIGIT+ ( ( '-rc' | '-alpha' ) ( '.' DIGIT+ )? )? ;
 fragment IDENTIFIER : ALPHA_CHAR WORD_CHAR* ;
 
 // According to IETF http://tools.ietf.org/html/rfc1034[RFC 1034] and http://tools.ietf.org/html/rfc1035[RFC 1035],
