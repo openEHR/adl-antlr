@@ -67,12 +67,12 @@ arithmetic_arith_expr: arithmetic_arith_expr arithmetic_binop arithmetic_leaf
     ;
 
 relational_binop:
-      '='
-    | '!='
-    | '<='
-    | '<'
-    | '>='
-    | '>'
+      SYM_EQ
+    | SYM_NE
+    | SYM_GT
+    | SYM_LT
+    | SYM_LE
+    | SYM_GE
     ;
 
 arithmetic_binop:
