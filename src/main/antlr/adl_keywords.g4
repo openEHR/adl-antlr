@@ -49,9 +49,3 @@ SYM_FOR_ALL  : [Ff][Oo][Rr][_][Aa][Ll][Ll] ;
 SYM_EXISTS   : [Ee][Xx][Ii][Ss][Tt][Ss] ;
 
 SYM_MATCHES : [Mm][Aa][Tt][Cc][Hh][Ee][Ss] | [Ii][Ss]'_'[Ii][Nn] | '\u2208' ;
-SYM_GT : '>' ;
-SYM_LT : '<' ;
-SYM_LE : '<=' ;
-SYM_GE : '>=' ;
-SYM_NE : '/=' | '!=' ;
-SYM_EQ : '=' ;

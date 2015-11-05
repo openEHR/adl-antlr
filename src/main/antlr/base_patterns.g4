@@ -18,6 +18,18 @@ archetype_ref : ARCHETYPE_HRID | ARCHETYPE_REF ;
 // -------------------------- Lexer patterns --------------------------
 //
 
+// ---------- symbols ----------
+
+SYM_GT : '>' ;
+SYM_LT : '<' ;
+SYM_LE : '<=' ;
+SYM_GE : '>=' ;
+SYM_NE : '/=' | '!=' ;
+SYM_EQ : '=' ;
+
+SYM_LIST_CONTINUE: '...' ;
+SYM_INTERVAL_SEP: '..' ;
+
 // ---------- whitespace & comments ----------
 
 WS         : [ \t\r]+    -> skip ;
