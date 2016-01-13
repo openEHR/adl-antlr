@@ -54,11 +54,9 @@ c_attribute: adl_dir? attribute_id ( c_existence | c_cardinality | c_existence c
 
 adl_dir  : '/' | ( adl_path_segment+ '/' ) ;
 
-c_attribute_tuple : '[' attribute_id ( ',' attribute_id )* ']' SYM_MATCHES '{' c_object_tuple ( ',' c_object_tuple )* '}' ;
+c_attribute_tuple : '[' attribute_id ( ',' attribute_id )* ']' SYM_MATCHES '{' c_primitive_tuple ( ',' c_primitive_tuple )* '}' ;
 
-c_object_tuple : '[' c_object_tuple_items ']' ;
-
-c_object_tuple_items : '{' c_primitive_object '}' ( ',' '{' c_primitive_object '}' )* ;
+c_primitive_tuple : '[' '{' c_primitive_object '}' ( ',' '{' c_primitive_object '}' )* ']' ;
 
 c_includes : SYM_INCLUDE assertion+ ;
 c_excludes : SYM_EXCLUDE assertion+ ;
