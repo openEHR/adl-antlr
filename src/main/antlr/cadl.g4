@@ -13,7 +13,7 @@ import adl_rules;
 //  ======================= Top-level Objects ========================
 //
 
-c_complex_object: type_id '[' ( ROOT_ID_CODE | ID_CODE ) ']' c_occurrences? ( SYM_MATCHES '{' c_attribute_def+ '}' )? ;
+c_complex_object: rm_type_id '[' ( ROOT_ID_CODE | ID_CODE ) ']' c_occurrences? ( SYM_MATCHES '{' c_attribute_def+ '}' )? ;
 
 // ======================== Components =======================
 
@@ -28,24 +28,24 @@ c_non_primitive_object:
     | archetype_slot
     ;
 
-c_archetype_root: SYM_USE_ARCHETYPE type_id '[' ID_CODE ',' archetype_ref ']' c_occurrences? ;
+c_archetype_root: SYM_USE_ARCHETYPE rm_type_id '[' ID_CODE ',' archetype_ref ']' c_occurrences? ;
 
-c_complex_object_proxy: SYM_USE_NODE type_id '[' ID_CODE ']' c_occurrences? adl_path ;
+c_complex_object_proxy: SYM_USE_NODE rm_type_id '[' ID_CODE ']' c_occurrences? adl_path ;
 
-archetype_slot: SYM_ALLOW_ARCHETYPE type_id '[' ID_CODE ']' (( c_occurrences? ( SYM_MATCHES '{' c_includes? c_excludes? '}' )? ) | SYM_CLOSED ) ;
+archetype_slot: SYM_ALLOW_ARCHETYPE rm_type_id '[' ID_CODE ']' (( c_occurrences? ( SYM_MATCHES '{' c_includes? c_excludes? '}' )? ) | SYM_CLOSED ) ;
 
 c_attribute_def:
       c_attribute
     | c_attribute_tuple
     ;
 
-c_attribute: adl_dir? attribute_id ( c_existence | c_cardinality | c_existence c_cardinality )
-    | adl_dir? attribute_id c_existence? c_cardinality? SYM_MATCHES '{' c_objects '}'
+c_attribute: adl_dir? rm_attribute_id ( c_existence | c_cardinality | c_existence c_cardinality )
+    | adl_dir? rm_attribute_id c_existence? c_cardinality? SYM_MATCHES '{' c_objects '}'
     ;
 
 adl_dir  : '/' | ( adl_path_segment+ '/' ) ;
 
-c_attribute_tuple : '[' attribute_id ( ',' attribute_id )* ']' SYM_MATCHES '{' c_primitive_tuple ( ',' c_primitive_tuple )* '}' ;
+c_attribute_tuple : '[' rm_attribute_id ( ',' rm_attribute_id )* ']' SYM_MATCHES '{' c_primitive_tuple ( ',' c_primitive_tuple )* '}' ;
 
 c_primitive_tuple : '[' '{' c_primitive_object '}' ( ',' '{' c_primitive_object '}' )* ']' ;
 
