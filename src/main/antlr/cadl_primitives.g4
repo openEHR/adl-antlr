@@ -55,6 +55,7 @@ regex2: ( '_' | '.*' | '\\.' | '\\/' | ~'^' )+ ;
 
 
 // ADL2 term types: [ac3], [ac3; at5], [at5]
+// NOTE: an assumed at-code (the ';' AT_CODE pattern) can only occur after an ac-code not after the single at-code
 c_terminology_code: '[' ( ( AC_CODE ( ';' AT_CODE )? ) | AT_CODE ) ']' ;
 
 c_boolean: ( boolean_value | boolean_list_value ) assumed_boolean_value? ;
