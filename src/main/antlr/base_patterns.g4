@@ -37,6 +37,10 @@ LINE       : '\n'        -> skip ;     // increment line count
 H_CMT_LINE : '--------' '-'*? '\n'  ;  // special type of comment for splitting template overlays
 CMT_LINE   : '--' .*? '\n'  -> skip ;  // (increment line count)
 
+// ---------- Delimited Regex matcher ------------
+// allows for '/' or '^' delimiters
+REGEX: '/' ( '\\/' | ~'/' )+ '/' | '^' ( '\\^' | ~'^' )+ '^';
+
 // ---------- ISO8601 Date/Time values ----------
 
 // TODO: consider adding non-standard but unambiguous patterns like YEAR '-' ( MONTH | '??' ) '-' ( DAY | '??' )

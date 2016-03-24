@@ -49,10 +49,7 @@ assumed_duration_value: ';' duration_value ;
 // for REGEX: strip first and last char, and then process with PCRE grammar
 c_string: ( string_value | string_list_value | regex_constraint ) assumed_string_value? ;
 assumed_string_value: ';' string_value ;
-regex_constraint: '/' regex1 '/' | '^' regex2 '^' ;
-regex1: ( '_' | '.*' | '\\.' | '\\/' | ~'/' )+ ; // TODO: not clear why first 3 matches are needed, but they work.
-regex2: ( '_' | '.*' | '\\.' | '\\/' | ~'^' )+ ;
-
+regex_constraint: REGEX;
 
 // ADL2 term types: [ac3], [ac3; at5], [at5]
 // NOTE: an assumed at-code (the ';' AT_CODE pattern) can only occur after an ac-code not after the single at-code
