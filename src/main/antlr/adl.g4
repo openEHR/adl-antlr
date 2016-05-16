@@ -13,9 +13,9 @@ import cadl, odin;
 //  ============== Parser rules ==============
 //
 
-adl: ( archetype | template | template_overlay | operational_template ) EOF ;
+adl: ( authored_archetype | template | template_overlay | operational_template ) EOF ;
 
-archetype: 
+authored_archetype:
     SYM_ARCHETYPE meta_data?
     ARCHETYPE_HRID
     specialize_section?
