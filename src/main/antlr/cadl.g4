@@ -41,9 +41,14 @@ c_attribute_def:
     | c_attribute_tuple
     ;
 
+// We match regexes here, even though technically they are C_STRING instances. This is because the only
+// workable solution to match a regex unambiguously appears to be to match with enclosing {}, which means
+// as a C_OBJECT alternative, not as a C_STRING.
 c_attribute: adl_dir? rm_attribute_id ( c_existence | c_cardinality | c_existence c_cardinality )
-    | adl_dir? rm_attribute_id c_existence? c_cardinality? SYM_MATCHES '{' c_objects '}'
+    | adl_dir? rm_attribute_id c_existence? c_cardinality? SYM_MATCHES ( '{' c_objects '}' | c_string_regex_block )
     ;
+
+c_string_regex_block: CONTAINED_REGEXP ;
 
 adl_dir  : '/' | ( adl_path_segment+ '/' ) ;
 

@@ -39,7 +39,15 @@ CMT_LINE   : '--' .*? '\n'  -> skip ;  // (increment line count)
 
 // ---------- Delimited Regex matcher ------------
 // allows for '/' or '^' delimiters
-REGEX: '/' ( '\\/' | ~'/' )+ '/' | '^' ( '\\^' | ~'^' )+ '^';
+// logical form - REGEX: '/' ( '\\/' | ~'/' )+ '/' | '^' ( '\\^' | ~'^' )+ '^';
+// The following is used to ensure REGEXes don't get mixed up with paths, which use '/' chars
+// In ADL, a regexp can only exist between {}. It can optionally have an assumed value, by adding ;"value"
+CONTAINED_REGEX: '{'WS* (SLASH_REGEX | CARET_REGEX) WS* (';' WS* STRING)? WS* '}';
+fragment SLASH_REGEX: '/' SLASH_REGEX_CHAR+ '/';
+fragment SLASH_REGEX_CHAR: ~[/\n\r] | ESCAPE_SEQ | '\\/';
+
+fragment CARET_REGEX: '^' CARET_REGEX_CHAR+ '^';
+fragment CARET_REGEX_CHAR: ~[^\n\r] | ESCAPE_SEQ | '\\^';
 
 // ---------- ISO8601 Date/Time values ----------
 

@@ -40,16 +40,15 @@ assumed_date_value: ';' date_value ;
 c_time: ( TIME_CONSTRAINT_PATTERN | time_value | time_list_value | time_interval_value | time_interval_list_value ) assumed_time_value? ;
 assumed_time_value: ';' time_value ;
 
-c_duration: (
-      DURATION_CONSTRAINT_PATTERN ( '/' ( duration_interval_value | duration_value ))?
+c_duration: ( DURATION_CONSTRAINT_PATTERN ( '/' ( duration_interval_value | duration_value ))?
     | duration_value | duration_list_value | duration_interval_value | duration_interval_list_value ) assumed_duration_value?
     ;
 assumed_duration_value: ';' duration_value ;
 
-// for REGEX: strip first and last char, and then process with PCRE grammar
-c_string: ( string_value | string_list_value | regex_constraint ) assumed_string_value? ;
+// Ideally we would match REGEX here as well, but we have to match it including the surrounding
+// {}, so it is matched at the c_attribute level.
+c_string: ( string_value | string_list_value ) assumed_string_value? ;
 assumed_string_value: ';' string_value ;
-regex_constraint: REGEX;
 
 // ADL2 term types: [ac3], [ac3; at5], [at5]
 // NOTE: an assumed at-code (the ';' AT_CODE pattern) can only occur after an ac-code not after the single at-code
