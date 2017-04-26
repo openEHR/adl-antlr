@@ -51,10 +51,9 @@ fragment CARET_REGEX_CHAR: ~[^\n\r] | ESCAPE_SEQ | '\\^';
 
 // ---------- ISO8601 Date/Time values ----------
 
-// TODO: consider adding non-standard but unambiguous patterns like YEAR '-' ( MONTH | '??' ) '-' ( DAY | '??' )
-ISO8601_DATE      : YEAR '-' MONTH ( '-' DAY )? ;
-ISO8601_TIME      : HOUR ':' MINUTE ( ':' SECOND ( ',' INTEGER )?)? TIMEZONE? ;
-ISO8601_DATE_TIME : YEAR '-' MONTH '-' DAY 'T' HOUR (':' MINUTE (':' SECOND ( [,.] DIGIT+ )?)?)? TIMEZONE? ;
+ISO8601_DATE      : YEAR '-' MONTH ( '-' DAY )? | YEAR '-' MONTH '-' UNKNOWN_DT | YEAR '-' UNKNOWN_DT '-' UNKNOWN_DT ;
+ISO8601_TIME      : ( HOUR ':' MINUTE ( ':' SECOND ( [,.] DIGIT+ )?)? | HOUR ':' MINUTE ':' UNKNOWN_DT | HOUR ':' UNKNOWN_DT ':' UNKNOWN_DT ) TIMEZONE? ;
+ISO8601_DATE_TIME : ( YEAR '-' MONTH '-' DAY 'T' HOUR (':' MINUTE (':' SECOND ( [,.] DIGIT+ )?)?)? | YEAR '-' MONTH '-' DAY 'T' HOUR ':' MINUTE ':' UNKNOWN_DT | YEAR '-' MONTH '-' DAY 'T' HOUR ':' UNKNOWN_DT ':' UNKNOWN_DT ) TIMEZONE? ;
 fragment TIMEZONE : 'Z' | [+-] HOUR ( ':' MINUTE )? ;   // hour offset, e.g. `+09:30`, or else literal `Z` indicating +0000.
 fragment YEAR     : [1-9][0-9]* ;
 fragment MONTH    : ( [0][0-9] | [1][0-2] ) ;    // month in year
@@ -62,6 +61,7 @@ fragment DAY      : ( [012][0-9] | [3][0-2] ) ;  // day in month
 fragment HOUR     : ( [01]?[0-9] | [2][0-3] ) ;  // hour in 24 hour clock
 fragment MINUTE   : [0-5][0-9] ;                 // minutes
 fragment SECOND   : [0-5][0-9] ;                 // seconds
+fragment UNKNOWN_DT  : '??' ;                    // any unknown date/time value, except years.
 
 // ISO8601 DURATION PnYnMnWnDTnnHnnMnn.nnnS 
 // here we allow a deviation from the standard to allow weeks to be // mixed in with the rest since this commonly occurs in medicine
