@@ -29,7 +29,15 @@ object_block :
 
 object_value_block : ( '(' rm_type_id ')' )? '<' ( primitive_object | attr_vals? | keyed_object* ) '>' ;
 
-keyed_object : '[' primitive_value ']' '=' object_block ; // TODO: probably should limit to String and Integer?
+keyed_object : '[' key_id ']' '=' object_block ;
+
+key_id :
+      string_value
+    | integer_value
+    | date_value
+    | time_value
+    | date_time_value
+    ;
 
 // ------ leaf types ------
 
