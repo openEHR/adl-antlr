@@ -29,6 +29,7 @@ SYM_EQ : '=' ;
 
 SYM_LIST_CONTINUE: '...' ;
 SYM_INTERVAL_SEP: '..' ;
+SYM_PLUS_OR_MINUS : '+/-' | '±' ;
 
 // ---------- whitespace & comments ----------
 
