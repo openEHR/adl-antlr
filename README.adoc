@@ -27,7 +27,7 @@ There are various goals for this project:
 
 * achieve definitive testing of the grammars published here, with at least the set of test archetypes in adl-archetypes;
 * harmonise with the other adl2-core Antl4 grammar mentioned above;
-* build out the grammars to a full 'listener' based component that cen be plugged into any Java tool development.
+* build out the grammars to a full 'listener' based component that can be plugged into any Java tool development.
 
 Other suggestions are welcome.
 
