@@ -13,7 +13,7 @@ import adl_keywords, odin_values;
 //  ======================= Parser rules ========================
 //
 
-c_primitive_object:
+c_inline_primitive_object:
       c_integer
     | c_real
     | c_date

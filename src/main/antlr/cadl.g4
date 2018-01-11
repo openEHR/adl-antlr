@@ -17,17 +17,18 @@ c_complex_object: rm_type_id '[' ( ROOT_ID_CODE | ID_CODE ) ']' c_occurrences? (
 
 // ======================== Components =======================
 
-c_objects: c_non_primitive_object_ordered+ | c_primitive_object ;
+c_objects: c_regular_object_ordered+ | c_inline_primitive_object ;
 
 sibling_order: ( SYM_AFTER | SYM_BEFORE ) '[' ID_CODE ']' ;
 
-c_non_primitive_object_ordered: sibling_order? c_non_primitive_object ;
+c_regular_object_ordered: sibling_order? c_regular_object ;
 
-c_non_primitive_object:
+c_regular_object:
       c_complex_object
     | c_archetype_root
     | c_complex_object_proxy
     | archetype_slot
+    | c_regular_primitive_object
     ;
 
 c_archetype_root: SYM_USE_ARCHETYPE rm_type_id '[' ID_CODE ',' archetype_ref ']' c_occurrences? ;
@@ -40,6 +41,8 @@ c_attribute_def:
       c_attribute
     | c_attribute_tuple
     ;
+
+c_regular_primitive_object: rm_type_id '[' ID_CODE ']' c_occurrences? ( SYM_MATCHES '{' c_inline_primitive_object '}' )? ;
 
 // We match regexes here, even though technically they are C_STRING instances. This is because the only
 // workable solution to match a regex unambiguously appears to be to match with enclosing {}, which means
@@ -54,7 +57,7 @@ adl_dir  : '/' | ( adl_path_segment+ '/' ) ;
 
 c_attribute_tuple : '[' rm_attribute_id ( ',' rm_attribute_id )* ']' SYM_MATCHES '{' c_primitive_tuple ( ',' c_primitive_tuple )* '}' ;
 
-c_primitive_tuple : '[' '{' c_primitive_object '}' ( ',' '{' c_primitive_object '}' )* ']' ;
+c_primitive_tuple : '[' '{' c_inline_primitive_object '}' ( ',' '{' c_inline_primitive_object '}' )* ']' ;
 
 c_includes : SYM_INCLUDE assertion+ ;
 c_excludes : SYM_EXCLUDE assertion+ ;
