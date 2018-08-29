@@ -57,8 +57,8 @@ ISO8601_TIME      : ( HOUR ':' MINUTE ( ':' SECOND ( [,.] DIGIT+ )?)? | HOUR ':'
 ISO8601_DATE_TIME : ( YEAR '-' MONTH '-' DAY 'T' HOUR (':' MINUTE (':' SECOND ( [,.] DIGIT+ )?)?)? | YEAR '-' MONTH '-' DAY 'T' HOUR ':' MINUTE ':' UNKNOWN_DT | YEAR '-' MONTH '-' DAY 'T' HOUR ':' UNKNOWN_DT ':' UNKNOWN_DT ) TIMEZONE? ;
 fragment TIMEZONE : 'Z' | [+-] HOUR ( ':' MINUTE )? ;   // hour offset, e.g. `+09:30`, or else literal `Z` indicating +0000.
 fragment YEAR     : [1-9][0-9]* ;
-fragment MONTH    : ( [0][0-9] | [1][0-2] ) ;    // month in year
-fragment DAY      : ( [012][0-9] | [3][0-2] ) ;  // day in month
+fragment MONTH    : ( [0][1-9] | [1][0-2] ) ;    // month in year
+fragment DAY      : ( [0][1-9] | [12][0-9] | [3][0-1] ) ;  // day in month
 fragment HOUR     : ( [01]?[0-9] | [2][0-3] ) ;  // hour in 24 hour clock
 fragment MINUTE   : [0-5][0-9] ;                 // minutes
 fragment SECOND   : [0-5][0-9] ;                 // seconds
