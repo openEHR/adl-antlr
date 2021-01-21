@@ -45,24 +45,23 @@ booleanOrExpression
     ;
 
 booleanAndExpression
-    :	booleanXorExpression
-    |	booleanAndExpression SYM_AND booleanXorExpression
-    ;
+	:	booleanXorExpression
+	|	booleanAndExpression SYM_AND booleanXorExpression
+	;
 
 booleanXorExpression
-    :	booleanNotExpression
-    |	booleanXorExpression SYM_XOR booleanNotExpression
-    ;
+	:	booleanNotExpression
+	|	booleanXorExpression SYM_XOR booleanNotExpression
+	;
 
 booleanNotExpression
     : SYM_NOT booleanNotExpression
     | booleanConstraintExpression
-    ;
+	;
 
 booleanConstraintExpression
     : booleanConstraint
-    | equalityExpression
-    ;
+    | equalityExpression;
 
 
 booleanConstraint: adlRulesPath SYM_MATCHES ('{' c_primitive_object '}' | CONTAINED_REGEXP );
@@ -105,10 +104,9 @@ argumentList:
     ;
 
 functionName:
-    identifier
-    ;
+    identifier;
 
-adlRulesPath: SYM_VARIABLE_START? ADL_PATH;
+adlRulesPath          : SYM_VARIABLE_START? ADL_PATH;
 
 variableReference: SYM_VARIABLE_START identifier;
 

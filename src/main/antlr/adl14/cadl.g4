@@ -1,39 +1,52 @@
 //
 // description: Antlr4 grammar for cADL non-primitves sub-syntax of Archetype Definition Language (ADL2)
-// author:      Thomas Beale <thomas.beale@openehr.org>
-// contributors:Pieter Bos <pieter.bos@nedap.com>
-// support:     openEHR Specifications PR tracker <https://openehr.atlassian.net/projects/SPECPR/issues>
-// copyright:   Copyright (c) 2015- openEHR Foundation <http://www.openEHR.org>
+//  author:      Thomas Beale <thomas.beale@openehr.org>
+//  contributors:Pieter Bos <pieter.bos@nedap.com>
+//  support:     openEHR Specifications PR tracker <https://openehr.atlassian.net/projects/SPECPR/issues>
+//  copyright:   Copyright (c) 2015- openEHR Foundation <http://www.openEHR.org>
 // license:     Apache 2.0 License <http://www.apache.org/licenses/LICENSE-2.0.html>
 //
 
 grammar cadl;
-import adl_rules, odin, adl_keywords;
+import adl_rules, odin;
 
 //
 //  ======================= Top-level Objects ========================
 //
 
-c_complex_object: type_id '[' ( ROOT_ID_CODE | ID_CODE ) ']' c_occurrences? ( SYM_MATCHES '{' c_attribute_def+ '}' )? ;
+domainSpecificExtension: type_id '<' odin_text? '>';
+
+c_complex_object: type_id (atTypeId)? c_occurrences? ( SYM_MATCHES '{' (c_attribute_def+ | '*') '}' )? ;
+
+atTypeId: '[' ( AT_CODE ) ']';
 
 // ======================== Components =======================
 
 c_objects: c_non_primitive_object_ordered+ | c_primitive_object ;
 
-sibling_order: ( SYM_AFTER | SYM_BEFORE ) '[' ID_CODE ']' ;
+sibling_order: ( SYM_AFTER | SYM_BEFORE ) '[' AT_CODE ']' ;
 
 c_non_primitive_object_ordered: sibling_order? c_non_primitive_object ;
 
 c_non_primitive_object:
       c_complex_object
+    | domainSpecificExtension
     | c_archetype_root
     | c_complex_object_proxy
     | archetype_slot
+    | c_ordinal
     ;
 
-c_archetype_root: SYM_USE_ARCHETYPE type_id '[' ID_CODE (SYM_COMMA archetype_ref)? ']' c_occurrences? ( SYM_MATCHES '{' c_attribute_def+ '}' )? ;
 
-c_complex_object_proxy: SYM_USE_NODE type_id '[' ID_CODE ']' c_occurrences? adl_path ;
+c_ordinal: ordinal_term  (',' ordinal_term)* (';' assumed_ordinal_value)?;
+
+assumed_ordinal_value: INTEGER | REAL;
+
+ordinal_term: (integer_value | real_value) '|' c_terminology_code;
+
+c_archetype_root: SYM_USE_ARCHETYPE type_id '[' AT_CODE (SYM_COMMA archetype_ref)? ']' c_occurrences? ( SYM_MATCHES '{' c_attribute_def+ '}' )? ;
+
+c_complex_object_proxy: SYM_USE_NODE type_id ('[' AT_CODE ']')? c_occurrences? adl_path ;
 
 archetype_slot:
       c_archetype_slot_head SYM_MATCHES '{' c_includes? c_excludes? '}'
@@ -42,19 +55,16 @@ archetype_slot:
 
 c_archetype_slot_head: c_archetype_slot_id c_occurrences? ;
 
-c_archetype_slot_id: SYM_ALLOW_ARCHETYPE type_id '[' ID_CODE ']' SYM_CLOSED? ;
+c_archetype_slot_id: SYM_ALLOW_ARCHETYPE type_id ('[' AT_CODE ']')? SYM_CLOSED? ;
 
 c_attribute_def:
       c_attribute
     | c_attribute_tuple
-    | default_value
     ;
 
-c_attribute: (ADL_PATH | attribute_id) c_existence? c_cardinality? ( SYM_MATCHES ('{' c_objects '}' | CONTAINED_REGEXP) )? ;
+c_attribute: (ADL_PATH | attribute_id) c_existence? c_cardinality? ( SYM_MATCHES ('{' (c_objects | '*') '}' | CONTAINED_REGEXP) )? ;
 
 c_attribute_tuple : '[' attribute_id ( ',' attribute_id )* ']' SYM_MATCHES '{' c_object_tuple ( ',' c_object_tuple )* '}' ;
-
-default_value: SYM_DEFAULT SYM_EQ ('<')? odin_text ('>')?;
 
 c_object_tuple : '[' c_object_tuple_items ']' ;
 
