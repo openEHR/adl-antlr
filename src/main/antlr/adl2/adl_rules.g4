@@ -30,37 +30,37 @@ booleanAssertion: ( identifier SYM_COLON )? expression ;
 //
 
 
-expression
-    : booleanForAllExpression
+expression:
+      booleanForAllExpression
     | expression SYM_IMPLIES booleanForAllExpression
     ;
 
-booleanForAllExpression
-    : booleanOrExpression
+booleanForAllExpression:
+      booleanOrExpression
     | SYM_FOR_ALL SYM_VARIABLE_START identifier SYM_IN (adlRulesPath | variableReference) SYM_SATISFIES? booleanForAllExpression;
 
-booleanOrExpression
-    : booleanAndExpression
+booleanOrExpression:
+      booleanAndExpression
     | booleanOrExpression SYM_OR booleanAndExpression
     ;
 
-booleanAndExpression
-    :	booleanXorExpression
-    |	booleanAndExpression SYM_AND booleanXorExpression
+booleanAndExpression:
+      booleanXorExpression
+    | booleanAndExpression SYM_AND booleanXorExpression
     ;
 
-booleanXorExpression
-    :	booleanNotExpression
-    |	booleanXorExpression SYM_XOR booleanNotExpression
+booleanXorExpression:
+      booleanNotExpression
+    | booleanXorExpression SYM_XOR booleanNotExpression
     ;
 
-booleanNotExpression
-    : SYM_NOT booleanNotExpression
+booleanNotExpression:
+      SYM_NOT booleanNotExpression
     | booleanConstraintExpression
     ;
 
-booleanConstraintExpression
-    : booleanConstraint
+booleanConstraintExpression:
+      booleanConstraint
     | equalityExpression
     ;
 
@@ -68,11 +68,11 @@ booleanConstraintExpression
 booleanConstraint: adlRulesPath SYM_MATCHES ('{' c_primitive_object '}' | CONTAINED_REGEXP );
 
 equalityExpression:
-    relOpExpression
+      relOpExpression
     | equalityExpression equalityBinop relOpExpression ;
 
 relOpExpression:
-    arithmeticExpression
+      arithmeticExpression
     | relOpExpression relationalBinop arithmeticExpression ;
 
 
@@ -80,15 +80,15 @@ relOpExpression:
 // Expressions evaluating to all kinds of value types
 //
 
-arithmeticExpression
-   : <assoc=right> arithmeticExpression powBinop arithmeticExpression
+arithmeticExpression:
+     <assoc=right> arithmeticExpression powBinop arithmeticExpression
    | arithmeticExpression multBinop arithmeticExpression
    | arithmeticExpression plusMinusBinop arithmeticExpression
    | expressionLeaf
    ;
 
-expressionLeaf
-    : booleanLiteral
+expressionLeaf:
+      booleanLiteral
     | integer_value
     | real_value
     | string_value
@@ -116,34 +116,36 @@ plusMinusBinop: '+' | '-';
 multBinop: '*' | '/' | '%';
 powBinop: '^';
 
-equalityBinop
-    : '='
+equalityBinop:
+      '='
     | '!='
     ;
 
-relationalBinop
-    : '<='
+relationalBinop:
+      '<='
     | '<'
     | '>='
     | '>'
     ;
 
-booleanLiteral
-    : SYM_TRUE
+booleanLiteral:
+      SYM_TRUE
     | SYM_FALSE
     ;
 
-SYM_FOR_ALL
-    : 'for_all'
+SYM_FOR_ALL:
+      'for_all'
     | '∀'
     | 'every' //if we follow xpath syntax, let's do that here as well (xpath 2 and xpath 3)
     ;
 
 SYM_IN:
-    'in'; //should be | '∈';, but that clashes with SYM_MATCHES, wich is also '∈'.
-
+    'in' //should be | '∈';, but that clashes with SYM_MATCHES, wich is also '∈'.
+    ;
+    
 SYM_SATISFIES:
-    'satisfies'; //from xpath - solves some parser ambiguity in future cases!
+    'satisfies' //from xpath - solves some parser ambiguity in future cases!
+    ;
 
 
 
