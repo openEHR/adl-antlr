@@ -1,9 +1,8 @@
 //
 //  description: Antlr4 grammar for openEHR Rules core syntax.
 //  author:      Thomas Beale <thomas.beale@openehr.org>
-//  contributors:Pieter Bos <pieter.bos@nedap.com>
 //  support:     openEHR Specifications PR tracker <https://openehr.atlassian.net/projects/SPECPR/issues>
-//  copyright:   Copyright (c) 2016- openEHR Foundation <http://www.openEHR.org>
+//  copyright:   Copyright (c) 2016 openEHR Foundation
 //  license:     Apache 2.0 License <http://www.apache.org/licenses/LICENSE-2.0.html>
 //
 

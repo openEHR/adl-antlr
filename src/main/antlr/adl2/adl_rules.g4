@@ -1,12 +1,10 @@
 //
 //  description: Antlr4 grammar for Rules sub-syntax of Archetype Definition Language (ADL2)
 //  author:      Thomas Beale <thomas.beale@openehr.org>
-//  contributors:Pieter Bos <pieter.bos@nedap.com>
 //  support:     openEHR Specifications PR tracker <https://openehr.atlassian.net/projects/SPECPR/issues>
-//  copyright:   Copyright (c) 2015- openEHR Foundation <http://www.openEHR.org>
+//  copyright:   Copyright (c) 2015 openEHR Foundation
 //  license:     Apache 2.0 License <http://www.apache.org/licenses/LICENSE-2.0.html>
 //
-//TODO: We could rebuild this based on a modified xpath-grammar. Will make this easier to comply with xpath syntax
 
 grammar adl_rules;
 import cadl_primitives;
@@ -15,137 +13,71 @@ import cadl_primitives;
 //  ============== Parser rules ==============
 //
 
-assertion_list: (assertion (';')?)+ ;// {_input.LA(1) == WS || _input.LA(1) == LINE}?) +;//whitespace parsing to prevent ambiguity
-
-assertion: variableDeclaration | booleanAssertion;
-
-variableDeclaration: VARIABLE_DECLARATION SYM_ASSIGNMENT expression;
-
-booleanAssertion: ( identifier SYM_COLON )? expression ;
-
-
+assertion: ( identifier ':' )? boolean_expr ;
 
 //
 // Expressions evaluating to boolean values
 //
 
-
-expression:
-      booleanForAllExpression
-    | expression SYM_IMPLIES booleanForAllExpression
+boolean_expr: boolean_expr boolean_binop boolean_leaf
+    | boolean_leaf
     ;
 
-booleanForAllExpression:
-      booleanOrExpression
-    | SYM_FOR_ALL SYM_VARIABLE_START identifier SYM_IN (adlRulesPath | variableReference) SYM_SATISFIES? booleanForAllExpression;
-
-booleanOrExpression:
-      booleanAndExpression
-    | booleanOrExpression SYM_OR booleanAndExpression
+boolean_leaf:
+      boolean_literal
+    | adl_path
+    | SYM_EXISTS adl_path
+    | boolean_constraint
+    | '(' boolean_expr ')'
+    | arithmetic_relop_expr
+    | SYM_NOT boolean_leaf
     ;
 
-booleanAndExpression:
-      booleanXorExpression
-    | booleanAndExpression SYM_AND booleanXorExpression
+boolean_constraint: ( adl_path | adl_relative_path ) SYM_MATCHES '{' c_primitive_object '}' ;
+
+boolean_binop:
+    | SYM_AND
+    | SYM_XOR
+    | SYM_OR
+    | SYM_IMPLIES
     ;
 
-booleanXorExpression:
-      booleanNotExpression
-    | booleanXorExpression SYM_XOR booleanNotExpression
-    ;
-
-booleanNotExpression:
-      SYM_NOT booleanNotExpression
-    | booleanConstraintExpression
-    ;
-
-booleanConstraintExpression:
-      booleanConstraint
-    | equalityExpression
-    ;
-
-
-booleanConstraint: adlRulesPath SYM_MATCHES ('{' c_primitive_object '}' | CONTAINED_REGEXP );
-
-equalityExpression:
-      relOpExpression
-    | equalityExpression equalityBinop relOpExpression ;
-
-relOpExpression:
-      arithmeticExpression
-    | relOpExpression relationalBinop arithmeticExpression ;
-
-
-//
-// Expressions evaluating to all kinds of value types
-//
-
-arithmeticExpression:
-     <assoc=right> arithmeticExpression powBinop arithmeticExpression
-   | arithmeticExpression multBinop arithmeticExpression
-   | arithmeticExpression plusMinusBinop arithmeticExpression
-   | expressionLeaf
-   ;
-
-expressionLeaf:
-      booleanLiteral
-    | integer_value
-    | real_value
-    | string_value
-    | adlRulesPath
-    | SYM_EXISTS adlRulesPath
-    | functionName '(' (argumentList)? ')'
-    | variableReference
-    | '(' expression ')'
-    | '-' expressionLeaf
-    ;
-
-argumentList:
-    expression (',' expression)*
-    ;
-
-functionName:
-    identifier
-    ;
-
-adlRulesPath: SYM_VARIABLE_START? ADL_PATH;
-
-variableReference: SYM_VARIABLE_START identifier;
-
-plusMinusBinop: '+' | '-';
-multBinop: '*' | '/' | '%';
-powBinop: '^';
-
-equalityBinop:
-      '='
-    | '!='
-    ;
-
-relationalBinop:
-      '<='
-    | '<'
-    | '>='
-    | '>'
-    ;
-
-booleanLiteral:
+boolean_literal:
       SYM_TRUE
     | SYM_FALSE
     ;
 
-SYM_FOR_ALL:
-      'for_all'
-    | '∀'
-    | 'every' //if we follow xpath syntax, let's do that here as well (xpath 2 and xpath 3)
+//
+// Expressions evaluating to arithmetic values
+//
+
+arithmetic_relop_expr: arithmetic_arith_expr relational_binop arithmetic_arith_expr ;
+
+arithmetic_leaf:
+      integer_value
+    | real_value
+    | adl_path
+    | '(' arithmetic_arith_expr ')'
+    | '-' arithmetic_leaf
     ;
 
-SYM_IN:
-    'in' //should be | '∈';, but that clashes with SYM_MATCHES, wich is also '∈'.
-    ;
-    
-SYM_SATISFIES:
-    'satisfies' //from xpath - solves some parser ambiguity in future cases!
+arithmetic_arith_expr: arithmetic_arith_expr arithmetic_binop arithmetic_leaf
+    | arithmetic_arith_expr '^'<assoc=right> arithmetic_leaf
+    | arithmetic_leaf
     ;
 
+relational_binop:
+      SYM_EQ
+    | SYM_NE
+    | SYM_GT
+    | SYM_LT
+    | SYM_LE
+    | SYM_GE
+    ;
 
-
+arithmetic_binop:
+      '/'
+    | '*'
+    | '+'
+    | '-'
+    ;

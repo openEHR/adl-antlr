@@ -1,9 +1,8 @@
 //
 // description: Antlr4 lexer grammar for keywords of Archetype Definition Language (ADL2)
 // author:      Thomas Beale <thomas.beale@openehr.org>
-// contributors:Pieter Bos <pieter.bos@nedap.com>
 // support:     openEHR Specifications PR tracker <https://openehr.atlassian.net/projects/SPECPR/issues>
-// copyright:   Copyright (c) 2015- openEHR Foundation <http://www.openEHR.org>
+// copyright:   Copyright (c) 2015 openEHR Foundation
 // license:     Apache 2.0 License <http://www.apache.org/licenses/LICENSE-2.0.html>
 //
 
@@ -11,6 +10,7 @@ lexer grammar adl_keywords;
 
 // ADL keywords
 SYM_ARCHETYPE            : [Aa][Rr][Cc][Hh][Ee][Tt][Yy][Pp][Ee] ;
+SYM_TEMPLATE_OVERLAY     : [Tt][Ee][Mm][Pp][Ll][Aa][Tt][Ee]'_'[Oo][Vv][Ee][Rr][Ll][Aa][Yy] ;
 SYM_TEMPLATE             : [Tt][Ee][Mm][Pp][Ll][Aa][Tt][Ee] ;
 SYM_OPERATIONAL_TEMPLATE : [Oo][Pp][Ee][Rr][Aa][Tt][Ii][Oo][Nn][Aa][Ll]'_'[Tt][Ee][Mm][Pp][Ll][Aa][Tt][Ee] ;
 
@@ -39,15 +39,13 @@ SYM_AFTER       : [Aa][Ff][Tt][Ee][Rr] ;
 SYM_BEFORE      : [Bb][Ee][Ff][Oo][Rr][Ee] ;
 SYM_CLOSED      : [Cc][Ll][Oo][Ss][Ee][Dd] ;
 
-SYM_DEFAULT     : '_' [Dd] [Ee] [Ff] [Aa] [Uu] [Ll] [Tt] ;
-
 SYM_THEN     : [Tt][Hh][Ee][Nn] ;
-SYM_AND      : [Aa][Nn][Dd] | '∧';
-SYM_OR       : [Oo][Rr] | '∨' ;
+SYM_AND      : [Aa][Nn][Dd] ;
+SYM_OR       : [Oo][Rr] ;
 SYM_XOR      : [Xx][Oo][Rr] ;
-SYM_NOT      : [Nn][Oo][Tt] | '!' | '∼' | '~' | '¬';
-SYM_IMPLIES  : [Ii][Mm][Pp][Ll][Ii][Ee][Ss] | '®';
-SYM_FOR_ALL  : [Ff][Oo][Rr][_][Aa][Ll][Ll] | '∀';
-SYM_EXISTS   : [Ee][Xx][Ii][Ss][Tt][Ss] | '∃';
+SYM_NOT      : [Nn][Oo][Tt] ;
+SYM_IMPLIES  : [Ii][Mm][Pp][Ll][Ii][Ee][Ss] ;
+SYM_FOR_ALL  : [Ff][Oo][Rr][_][Aa][Ll][Ll] ;
+SYM_EXISTS   : [Ee][Xx][Ii][Ss][Tt][Ss] ;
 
-SYM_MATCHES : [Mm][Aa][Tt][Cc][Hh][Ee][Ss] | [Ii][Ss]'_'[Ii][Nn] | '∈';
+SYM_MATCHES : [Mm][Aa][Tt][Cc][Hh][Ee][Ss] | [Ii][Ss]'_'[Ii][Nn] | '\u2208' ;
