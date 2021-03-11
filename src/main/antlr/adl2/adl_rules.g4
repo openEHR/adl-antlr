@@ -1,8 +1,9 @@
 //
 //  description: Antlr4 grammar for Rules sub-syntax of Archetype Definition Language (ADL2)
 //  author:      Thomas Beale <thomas.beale@openehr.org>
+//  contributors:Pieter Bos <pieter.bos@nedap.com>
 //  support:     openEHR Specifications PR tracker <https://openehr.atlassian.net/projects/SPECPR/issues>
-//  copyright:   Copyright (c) 2015 openEHR Foundation
+//  copyright:   Copyright (c) 2015- openEHR Foundation <http://www.openEHR.org>
 //  license:     Apache 2.0 License <http://www.apache.org/licenses/LICENSE-2.0.html>
 //
 
@@ -12,6 +13,10 @@ import cadl_primitives;
 //
 //  ============== Parser rules ==============
 //
+
+statement: variable_decl | assertion;
+
+variable_decl: VARIABLE_DECLARATION SYM_ASSIGNMENT boolean_expr;
 
 assertion: ( identifier ':' )? boolean_expr ;
 

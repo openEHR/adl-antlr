@@ -1,5 +1,8 @@
 //
 // grammar defining ODIN terminal value types, including atoms, lists and intervals
+// author:      Pieter Bos <pieter.bos@nedap.com>
+// support:     openEHR Specifications PR tracker <https://openehr.atlassian.net/projects/SPECPR/issues>
+// copyright:   Copyright (c) 2018- openEHR Foundation <http://www.openEHR.org>
 //
 
 grammar odin_values;

@@ -1,6 +1,7 @@
 //
 // description: Antlr4 grammar for cADL primitives sub-syntax of Archetype Definition Language (ADL2)
 // author:      Thomas Beale <thomas.beale@openehr.org>
+// contributors:Pieter Bos <pieter.bos@nedap.com>
 // support:     openEHR Specifications PR tracker <https://openehr.atlassian.net/projects/SPECPR/issues>
 // copyright:   Copyright (c) 2015 openEHR Foundation
 // license:     Apache 2.0 License <http://www.apache.org/licenses/LICENSE-2.0.html>
@@ -57,23 +58,11 @@ c_terminology_code: '[' ( ( AC_CODE ( ';' AT_CODE )? ) | AT_CODE ) ']' ;
 c_boolean: ( boolean_value | boolean_list_value ) assumed_boolean_value? ;
 assumed_boolean_value: ';' boolean_value ;
 
-adl_path          : adl_path_segment+ ;
-adl_relative_path : adl_path_element adl_path ;  // TODO: remove when current slots no longer needed
-adl_path_segment  : '/' adl_path_element ;
-adl_path_element  : rm_attribute_id ( '[' ID_CODE ']' )? ;
-
 
 //
 //  ======================= Lexical rules ========================
 //
 
-// ---------- various ADL2 codes -------
-
-ROOT_ID_CODE : 'id1' '.1'* ;
-ID_CODE      : 'id' CODE_STR ;
-AT_CODE      : 'at' CODE_STR ;
-AC_CODE      : 'ac' CODE_STR ;
-fragment CODE_STR : ('0' | [1-9][0-9]*) ( '.' ('0' | [1-9][0-9]* ))* ;
 
 // ---------- ISO8601-based date/time/duration constraint patterns
 
