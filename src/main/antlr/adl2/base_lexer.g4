@@ -191,8 +191,10 @@ SYM_NE : '/=' | '!=' | '≠' ;
 SYM_EQ : '=' ;
 SYM_FOR_ALL: 'for_all' | '∀' ;
 SYM_EXISTS: 'exists' | '∃' ;
+SYM_IN: ':' | 'in'
 SYM_LIST_CONTINUE: '...' ;
 SYM_INTERVAL_SEP: '..' ;
 SYM_PLUS_OR_MINUS : '+/-' | '±' ;
 
+INCLUDED_LANGUAGE_FRAGMENT: '(' ALPHANUM_CHAR+ ')' (WS|LINE)* '<#' .* '#>';
 

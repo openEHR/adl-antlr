@@ -10,16 +10,6 @@
 grammar base_expressions;
 
 
-// Universal and existential quantifier
-
-for_all_expr:
-      SYM_FOR_ALL VARIABLE_ID ':' value_ref '|' boolean_expr
-    ;
-
-exists_expr:
-      SYM_EXISTS VARIABLE_ID ':' value_ref '|' boolean_expr
-    ;
-
 //
 // General expressions
 //
@@ -35,6 +25,16 @@ simple_expression:
     | arithmetic_expr
     ;
     
+// Universal and existential quantifier
+
+for_all_expr:
+      SYM_FOR_ALL VARIABLE_ID SYM_IN value_ref '|'? boolean_expr
+    ;
+
+exists_expr:
+      SYM_EXISTS VARIABLE_ID SYM_IN value_ref '|'? boolean_expr
+    ;
+
 //
 // Expressions evaluating to boolean values
 //
