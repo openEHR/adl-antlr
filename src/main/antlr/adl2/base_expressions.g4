@@ -10,42 +10,58 @@
 grammar base_expressions;
 
 
+// Universal and existential quantifier
+
+for_all_expr:
+      SYM_FOR_ALL VARIABLE_ID ':' value_ref '|' boolean_expr
+    ;
+
+exists_expr:
+      SYM_EXISTS VARIABLE_ID ':' value_ref '|' boolean_expr
+    ;
+
 //
 // General expressions
 //
+
 expression:
+      simple_expression
+    | for_all_expr
+    | exists_expr
+    ;
+    
+simple_expression:
       boolean_expr
     | arithmetic_expr
     ;
-
+    
 //
 // Expressions evaluating to boolean values
 //
 
 boolean_expr:
-      boolean_expr boolean_binop boolean_leaf
+      boolean_expr SYM_AND boolean_leaf
+    | boolean_expr SYM_XOR boolean_leaf
+    | boolean_expr SYM_OR boolean_leaf
+    | boolean_expr SYM_IMPLIES boolean_leaf
     | boolean_leaf
     ;
 
+// basic boolean expression elements
+
 boolean_leaf:
       boolean_literal
-    | boolean_data_ref
+    | instance_ref
     | '(' boolean_expr ')'
     | relational_expr
+    | comparison_expr
     | constraint_expr
-    | SYM_EXISTS data_ref
+    | SYM_EXISTS mapped_data_ref
     | SYM_NOT boolean_leaf
     ;
 
-boolean_binop:
-    | SYM_AND
-    | SYM_XOR
-    | SYM_OR
-    | SYM_IMPLIES
-    ;
-
 constraint_expr: 
-      data_ref SYM_MATCHES '{' c_primitive_object '}' 
+      mapped_data_ref SYM_MATCHES '{' c_primitive_object '}' 
     ;
 
 boolean_literal:
@@ -54,6 +70,14 @@ boolean_literal:
     ;
     
 //
+// Comparison expression between any operand
+//
+
+comparison_expr: 
+      simple_expression equality_binop simple_expression
+    ;
+
+//
 // Relational expressions of arithmetic operands
 //
 
@@ -61,9 +85,13 @@ relational_expr:
       arithmetic_expr relational_binop arithmetic_expr
     ;
 
-relational_binop:
+equality_binop:
       SYM_EQ
     | SYM_NE
+    ;
+    
+relational_binop:
+      equality_binop
     | SYM_GT
     | SYM_LT
     | SYM_LE
@@ -74,39 +102,52 @@ relational_binop:
 // Expressions evaluating to arithmetic values
 //
 
-arithmetic_leaf:
-      integer_value
-    | real_value
-    | numeric_data_ref   
-    | '(' arithmetic_expr ')'
-    ;
-
 arithmetic_expr: 
-      arithmetic_expr arithmetic_binop arithmetic_leaf
-    | arithmetic_expr '^'<assoc=right> arithmetic_leaf
+      <assoc=right> arithmetic_expr '^' arithmetic_leaf
+    | arithmetic_expr mult_op arithmetic_leaf
+    | arithmetic_expr add_op arithmetic_leaf
     | arithmetic_leaf
     ;
 
-arithmetic_binop:
+arithmetic_leaf:
+      integer_value
+    | real_value
+    | instance_ref   
+    | '(' arithmetic_expr ')'
+    ;
+
+mult_op:
       '/'
     | '*'
-    | '+'
+    ;
+
+add_op:
+      '+'
     | '-'
     ;
 
 //
-// Data references: currently treat ADL paths as data references;
-// this mapping is ambiguous, since an ADL path may match multiple runtime objects
+// instances references: data references, variables, and function calls.
+// TODO: Currently treat ADL paths as 'mapped' data references;
+// which is ambiguous, since an ADL path may match multiple runtime objects
 //
 
-data_ref:
-      boolean_data_ref
-    | numeric_data_ref
+instance_ref:
+      value_ref
+    | function_call
     ;
+
+value_ref:
+      mapped_data_ref
+    | variable_id
+    ;
+
+mapped_data_ref: ADL_PATH ;
+
+variable_id: ALPHA_LC_ID ;
+
+function_call: ALPHA_LC_ID '(' ( expression (',' expression)* )? ')' ;
+
+
+	
     
-boolean_data_ref: ADL_PATH
-    ;
-
-numeric_data_ref: ADL_PATH
-    ;
-

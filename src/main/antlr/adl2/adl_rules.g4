@@ -11,13 +11,15 @@ grammar adl_rules;
 import cadl_primitives;
 
 //
-//  ============== Parser rules ==============
+// Statements: currently, assignment or assertion
+// TODO: the direct assignment of symbol to path ('mapped_data_ref')
+// is ambiguous; to be reviewed in next version
 //
 
 statement: assignment | assertion;
 
 assignment: 
-      VARIABLE_ID ':' ALPHA_UC_ID SYM_ASSIGNMENT data_ref 
+      VARIABLE_ID ':' ALPHA_UC_ID SYM_ASSIGNMENT mapped_data_ref 
     | VARIABLE_ID ( ':' ALPHA_UC_ID )? SYM_ASSIGNMENT expression 
     ;
 

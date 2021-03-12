@@ -185,11 +185,12 @@ fragment HEX_DIGIT : [0-9a-fA-F] ;
 
 SYM_GT : '>' ;
 SYM_LT : '<' ;
-SYM_LE : '<=' ;
-SYM_GE : '>=' ;
-SYM_NE : '/=' | '!=' ;
+SYM_LE : '<=' | '≤' ;
+SYM_GE : '>=' | '≥' ;
+SYM_NE : '/=' | '!=' | '≠' ;
 SYM_EQ : '=' ;
-
+SYM_FOR_ALL: 'for_all' | '∀' ;
+SYM_EXISTS: 'exists' | '∃' ;
 SYM_LIST_CONTINUE: '...' ;
 SYM_INTERVAL_SEP: '..' ;
 SYM_PLUS_OR_MINUS : '+/-' | '±' ;
