@@ -31,8 +31,8 @@ for_all_expr:
       SYM_FOR_ALL VARIABLE_ID SYM_IN value_ref '|'? boolean_expr
     ;
 
-exists_expr:
-      SYM_EXISTS VARIABLE_ID SYM_IN value_ref '|'? boolean_expr
+there_exists_expr:
+      SYM_THERE_EXISTS VARIABLE_ID SYM_IN value_ref '|'? boolean_expr
     ;
 
 //
