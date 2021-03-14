@@ -10,8 +10,8 @@ grammar base_patterns;
 import base_lexer;
 
 
-type_id      : ALPHA_UC_ID ( '<' type_id ( ',' type_id )* '>' )? ;
-attribute_id : ALPHA_LC_ID ;
+rm_type_id      : ALPHA_UC_ID ( '<' rm_type_id ( ',' rm_type_id )* '>' )? ;
+rm_attribute_id : ALPHA_LC_ID ;
 identifier   : ALPHA_UC_ID | ALPHA_LC_ID ;
 
 archetype_ref : ARCHETYPE_HRID | ARCHETYPE_REF ;

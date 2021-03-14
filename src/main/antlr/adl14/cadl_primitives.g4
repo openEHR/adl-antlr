@@ -8,7 +8,7 @@
 //
 
 grammar cadl_primitives;
-import odin_values;
+import adl_keywords, odin_values;
 
 //
 //  ======================= Parser rules ========================
@@ -67,8 +67,9 @@ identifier: AT_CODE | AC_CODE | ALPHA_LC_ID | ALPHA_UC_ID | INTEGER ;
 c_boolean: ( boolean_value | boolean_list_value ) assumed_boolean_value? ;
 assumed_boolean_value: ';' boolean_value ;
 
-adl_path          : ADL_PATH;
-
+//
+//  ======================= Lexical rules ========================
+//
 
 
 // ---------- ISO8601-based date/time/duration constraint patterns
@@ -86,7 +87,4 @@ fragment HOUR_PATTERN   : 'hh' | 'HH' | '??' | 'XX' | 'xx'  ;
 fragment MINUTE_PATTERN : 'mm' | 'MM' | '??' | 'XX' | 'xx'  ;
 fragment SECOND_PATTERN : 'ss' | 'SS' | '??' | 'XX' | 'xx'  ;
 
-SYM_LEFT_BRACKET: '[';
-SYM_RIGHT_BRACKET: ']';
-SYM_SLASH: '/';
 

@@ -8,7 +8,7 @@
 //
 
 grammar adl_rules;
-import cadl_primitives;
+import base_expressions;
 
 //
 // Statements: currently, assignment or assertion

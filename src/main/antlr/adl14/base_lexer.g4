@@ -64,8 +64,6 @@ fragment PATH_ATTRIBUTE    : AT_CODE | STRING | INTEGER | ARCHETYPE_REF;
 
 // ---------- various ADL2 codes -------
 
-ROOT_ID_CODE : 'id1' '.1'* ;
-ID_CODE      : 'id' CODE_STR ;
 AT_CODE      : 'at' CODE_STR ;
 AC_CODE      : 'ac' CODE_STR ;
 fragment CODE_STR : ( [0-9][0-9]*) ( '.' ('0' | [1-9][0-9]* ))* ;
@@ -87,10 +85,6 @@ fragment CARET_REGEXP_CHAR: ~[^\n\r] | ESCAPE_SEQ | '\\^';
 
 // ---------- whitespace & comments ----------
 
-SYM_TEMPLATE_OVERLAY : H_CMT_LINE (WS|LINE)* SYM_TEMPLATE_OVERLAY_ONLY;
-fragment H_CMT_LINE : '--------' '-'*? ('\n'|'\r''\n'|'\r')  ;  // special type of comment for splitting template overlays
-fragment SYM_TEMPLATE_OVERLAY_ONLY     : [Tt][Ee][Mm][Pp][Ll][Aa][Tt][Ee]'_'[Oo][Vv][Ee][Rr][Ll][Aa][Yy] ;
-
 WS         : [ \t\r]+    -> channel(HIDDEN) ;
 LINE       : '\n'        -> channel(HIDDEN) ;     // increment line count
 CMT_LINE   : '--' ~[\n\r]*? ('\n'|'\r''\n'|'\r')  -> skip ;  // (increment line count)
@@ -99,8 +93,8 @@ CMT_LINE   : '--' ~[\n\r]*? ('\n'|'\r''\n'|'\r')  -> skip ;  // (increment line 
 
 // TODO: consider adding non-standard but unambiguous patterns like YEAR '-' ( MONTH | '??' ) '-' ( DAY | '??' )
 ISO8601_DATE      : YEAR '-' MONTH ( '-' DAY )? ;
-ISO8601_TIME      : HOUR SYM_COLON MINUTE ( SYM_COLON SECOND ( SYM_COMMA INTEGER )?)? ( TIMEZONE )? ;
-ISO8601_DATE_TIME : YEAR '-' MONTH '-' DAY 'T' HOUR (SYM_COLON MINUTE (SYM_COLON SECOND ( SYM_COMMA DIGIT+ )?)?)? ( TIMEZONE )? ;
+ISO8601_TIME      : HOUR SYM_COLON MINUTE ( SYM_COLON SECOND ( SECOND_DEC_SEP INTEGER )?)? ( TIMEZONE )? ;
+ISO8601_DATE_TIME : YEAR '-' MONTH '-' DAY 'T' HOUR (SYM_COLON MINUTE (SYM_COLON SECOND ( SECOND_DEC_SEP DIGIT+ )?)?)? ( TIMEZONE )? ;
 fragment TIMEZONE : 'Z' | ('+'|'-') HOUR_MIN ;   // hour offset, e.g. `+0930`, or else literal `Z` indicating +0000.
 fragment YEAR     : [1-9][0-9]* ;
 fragment MONTH    : ( [0][0-9] | [1][0-2] ) ;    // month in year
@@ -109,11 +103,12 @@ fragment HOUR     : ( [01]?[0-9] | [2][0-3] ) ;  // hour in 24 hour clock
 fragment MINUTE   : [0-5][0-9] ;                 // minutes
 fragment HOUR_MIN : ( [01]?[0-9] | [2][0-3] ) [0-5][0-9] ;  // hour / minutes quad digit pattern
 fragment SECOND   : [0-5][0-9] ;                 // seconds
+fragment SECOND_DEC_SEP : '.' | ','
 
 // ISO8601 DURATION PnYnMnWnDTnnHnnMnn.nnnS
 // here we allow a deviation from the standard to allow weeks to be // mixed in with the rest since this commonly occurs in medicine
 // TODO: the following will incorrectly match just 'P'
-ISO8601_DURATION : '-'?'P' (DIGIT+ [yY])? (DIGIT+ [mM])? (DIGIT+ [wW])? (DIGIT+[dD])? ('T' (DIGIT+[hH])? (DIGIT+[mM])? (DIGIT+ ('.'DIGIT+)?[sS])?)? ;
+ISO8601_DURATION : '-'?'P' (DIGIT+ [yY])? (DIGIT+ [mM])? (DIGIT+ [wW])? (DIGIT+[dD])? ('T' (DIGIT+[hH])? (DIGIT+[mM])? (DIGIT+ (SECOND_DEC_SEP DIGIT+)?[sS])?)? ;
 
 // ------------------- special word symbols --------------
 SYM_TRUE  : [Tt][Rr][Uu][Ee] ;
@@ -133,8 +128,7 @@ fragment IDENTIFIER : ALPHA_CHAR WORD_CHAR* ;
 TERM_CODE_REF : '[' TERM_CODE_CHAR+ ( '(' TERM_CODE_CHAR+ ')' )? '::' TERM_CODE_CHAR+ ']' ;  // e.g. [ICD10AM(1998)::F23]; [ISO_639-1::en]
 fragment TERM_CODE_CHAR: NAME_CHAR | '.';
 
-VARIABLE_DECLARATION: SYM_VARIABLE_START RULE_IDENTIFIER SYM_COLON RULE_IDENTIFIER;
-fragment RULE_IDENTIFIER: ALPHA_UC_ID | ALPHA_LC_ID;
+// --------------------- URIs --------------------
 
 EMBEDDED_URI: '<' ([ \t\r\n]|CMT_LINE)* URI ([ \t\r\n]|CMT_LINE)* '>';
 
@@ -182,9 +176,8 @@ fragment URI_PCT_ENCODED : '%' HEX_DIGIT HEX_DIGIT ;
 
 fragment URI_UNRESERVED: ALPHA_CHAR | DIGIT | '-' | '.' | '_' | '~';
 fragment URI_RESERVED: URI_GEN_DELIMS | URI_SUB_DELIMS;
-fragment URI_GEN_DELIMS: ':' | '/' | '?' | '#' | '[' | ']' | '@'; //TODO: migrate to [/?#...] notation
-fragment URI_SUB_DELIMS: '!' | '$' | '&' | '\'' | '(' | ')'
-                         | '*' | '+' | ',' | ';' | '=';
+fragment URI_GEN_DELIMS: [:/?#[\]@];
+fragment URI_SUB_DELIMS: [!$&'()*+,;=];
 
 // According to IETF http://tools.ietf.org/html/rfc1034[RFC 1034] and http://tools.ietf.org/html/rfc1035[RFC 1035],
 // as clarified by http://tools.ietf.org/html/rfc2181[RFC 2181] (section 11)
@@ -226,16 +219,30 @@ fragment DIGIT     : [0-9] ;
 fragment HEX_DIGIT : [0-9a-fA-F] ;
 
 
-SYM_VARIABLE_START: '$';
-SYM_ASSIGNMENT: '::=';
+// ---------- symbols ----------
 
-SYM_SEMICOLON: ';';
-SYM_LT: '<';
-SYM_GT: '>';
-SYM_LE: '<=';
-SYM_GE: '>=';
-SYM_EQ: '=';
-SYM_LEFT_PAREN: '(';
-SYM_RIGHT_PAREN: ')';
-SYM_COLON: ':';
-SYM_COMMA: ',';
+SYM_ASSIGNMENT: ':=';
+
+SYM_GT : '>' ;
+SYM_LT : '<' ;
+SYM_LE : '<=' | '≤' ;
+SYM_GE : '>=' | '≥' ;
+SYM_NE : '/=' | '!=' | '≠' ;
+SYM_EQ : '=' ;
+SYM_PLUS_OR_MINUS : '+/-' | '±' ;
+
+SYM_THEN     : [Tt][Hh][Ee][Nn] ;
+SYM_AND      : [Aa][Nn][Dd] | '∧' ;
+SYM_OR       : [Oo][Rr] | '∨' ;
+SYM_XOR      : [Xx][Oo][Rr] ;
+SYM_NOT      : [Nn][Oo][Tt] | '!' | '~' | '¬' ;
+SYM_IMPLIES  : [Ii][Mm][Pp][Ll][Ii][Ee][Ss] | '⇒' ;
+SYM_FOR_ALL: 'for_all' | '∀' ;
+SYM_THERE_EXISTS: 'there_exists' | '∃' ;
+
+SYM_EXISTS: 'exists' | '∃' ;
+SYM_IN: ':' | 'in'
+SYM_LIST_CONTINUE: '...' ;
+SYM_INTERVAL_SEP: '..' ;
+
+SYM_MATCHES : [Mm][Aa][Tt][Cc][Hh][Ee][Ss] | [Ii][Ss]'_'[Ii][Nn] | '∈' ;

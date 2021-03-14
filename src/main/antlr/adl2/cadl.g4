@@ -69,4 +69,4 @@ unique_mod       : ';' SYM_UNIQUE ;
 multiplicity_mod : ordering_mod | unique_mod ;
 
 c_occurrences : SYM_OCCURRENCES SYM_MATCHES '{' multiplicity '}' ;
-multiplicity  : INTEGER | '*' | INTEGER SYM_INTERVAL_SEP ( INTEGER | '*' ) ;
+multiplicity  : INTEGER | '*' | INTEGER '..' ( INTEGER | '*' ) ;

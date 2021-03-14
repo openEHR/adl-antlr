@@ -70,9 +70,4 @@ term_code_list_value : term_code_value ( ( ',' term_code_value )+ | ',' SYM_LIST
 
 relop : SYM_GT | SYM_LT | SYM_LE | SYM_GE ;
 
-//
-//  ======================= Lexical rules ========================
-//
 
-SYM_LIST_CONTINUE: '...' ;
-SYM_INTERVAL_SEP: '..' ;

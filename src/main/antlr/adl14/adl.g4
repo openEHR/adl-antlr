@@ -25,7 +25,7 @@ archetype:
     description_section
     definition_section
     rules_section?
-    terminology_section
+    ontology_section
     ;
 
 
@@ -33,8 +33,8 @@ specialization_section : SYM_SPECIALIZE archetype_ref ;
 language_section       : SYM_LANGUAGE odin_text ;
 description_section    : SYM_DESCRIPTION odin_text ;
 definition_section     : SYM_DEFINITION c_complex_object ;
-rules_section          : SYM_RULES assertion_list;
-terminology_section    : SYM_TERMINOLOGY odin_text ;
+invariant_section      : SYM_INVARIANT assertion_list;
+ontology_section       : SYM_ONTOLOGY odin_text ;
 
 concept_section:
  'concept' '[' AT_CODE ']';

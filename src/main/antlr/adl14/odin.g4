@@ -17,21 +17,28 @@ import odin_values;
 odin_text :
       attr_vals
     | object_value_block
-    | keyed_object+
 	;
 
 attr_vals : ( attr_val ';'? )+ ;
 
-attr_val : attribute_id '=' object_block ;
+attr_val : rm_attribute_id '=' object_block ;
 
 object_block :
       object_value_block
     | object_reference_block
     ;
 
-object_value_block : ( '(' type_id ')' )? '<' ( primitive_object | attr_vals? | keyed_object* ) '>' | EMBEDDED_URI ;
+object_value_block : ( '(' rm_type_id ')' )? '<' ( primitive_object | attr_vals? | keyed_object* ) '>' ;
 
-keyed_object : '[' primitive_value ']' '=' object_block ; // TODO: probably should limit to String and Integer?
+keyed_object : '[' key_id ']' '=' object_block ;
+
+key_id :
+      string_value
+    | integer_value
+    | date_value
+    | time_value
+    | date_time_value
+    ;
 
 // ------ leaf types ------
 
@@ -51,11 +58,22 @@ primitive_value :
     | date_value
     | time_value 
     | date_time_value 
-    | duration_value
+    | duration_value 
+    | uri_value 
     ;
 
-primitive_list_value :  primitive_value ( ( ',' primitive_value )+ | ',' SYM_LIST_CONTINUE ) ;
-
+primitive_list_value : 
+      string_list_value 
+    | integer_list_value 
+    | real_list_value 
+    | boolean_list_value 
+    | character_list_value 
+    | term_code_list_value
+    | date_list_value
+    | time_list_value 
+    | date_time_list_value 
+    | duration_list_value 
+    ;
 
 primitive_interval_value :
       integer_interval_value
@@ -69,4 +87,4 @@ primitive_interval_value :
 object_reference_block : '<' odin_path_list '>' ;
 
 odin_path_list     : odin_path ( ( ',' odin_path )+ | SYM_LIST_CONTINUE )? ;
-odin_path          : '/' | ADL_PATH ;
+odin_path          : '/' | key_id ;

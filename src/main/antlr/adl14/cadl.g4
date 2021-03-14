@@ -14,11 +14,9 @@ import adl_rules, odin;
 //  ======================= Top-level Objects ========================
 //
 
-domainSpecificExtension: type_id '<' odin_text? '>';
+c_complex_object: rm_type_id (at_type_id)? c_occurrences? ( SYM_MATCHES '{' (c_attribute+ | '*') '}' )? ;
 
-c_complex_object: type_id (atTypeId)? c_occurrences? ( SYM_MATCHES '{' (c_attribute_def+ | '*') '}' )? ;
-
-atTypeId: '[' ( AT_CODE ) ']';
+at_type_id: '[' ( AT_CODE ) ']';
 
 // ======================== Components =======================
 
@@ -30,13 +28,14 @@ c_non_primitive_object_ordered: sibling_order? c_non_primitive_object ;
 
 c_non_primitive_object:
       c_complex_object
-    | domainSpecificExtension
+    | domain_specific_extension
     | c_archetype_root
     | c_complex_object_proxy
     | archetype_slot
     | c_ordinal
     ;
 
+domain_specific_extension: rm_type_id '<' odin_text? '>';
 
 c_ordinal: ordinal_term  (',' ordinal_term)* (';' assumed_ordinal_value)?;
 
@@ -44,9 +43,9 @@ assumed_ordinal_value: INTEGER | REAL;
 
 ordinal_term: (integer_value | real_value) '|' c_terminology_code;
 
-c_archetype_root: SYM_USE_ARCHETYPE type_id '[' AT_CODE (SYM_COMMA archetype_ref)? ']' c_occurrences? ( SYM_MATCHES '{' c_attribute_def+ '}' )? ;
+c_archetype_root: SYM_USE_ARCHETYPE rm_type_id '[' AT_CODE (SYM_COMMA archetype_ref)? ']' c_occurrences? ( SYM_MATCHES '{' c_attribute+ '}' )? ;
 
-c_complex_object_proxy: SYM_USE_NODE type_id ('[' AT_CODE ']')? c_occurrences? adl_path ;
+c_complex_object_proxy: SYM_USE_NODE rm_type_id ('[' AT_CODE ']')? c_occurrences? adl_path ;
 
 archetype_slot:
       c_archetype_slot_head SYM_MATCHES '{' c_includes? c_excludes? '}'
@@ -55,22 +54,9 @@ archetype_slot:
 
 c_archetype_slot_head: c_archetype_slot_id c_occurrences? ;
 
-c_archetype_slot_id: SYM_ALLOW_ARCHETYPE type_id ('[' AT_CODE ']')? SYM_CLOSED? ;
+c_archetype_slot_id: SYM_ALLOW_ARCHETYPE rm_type_id ('[' AT_CODE ']')? SYM_CLOSED? ;
 
-c_attribute_def:
-      c_attribute
-    | c_attribute_tuple
-    ;
-
-c_attribute: (ADL_PATH | attribute_id) c_existence? c_cardinality? ( SYM_MATCHES ('{' (c_objects | '*') '}' | CONTAINED_REGEXP) )? ;
-
-c_attribute_tuple : '[' attribute_id ( ',' attribute_id )* ']' SYM_MATCHES '{' c_object_tuple ( ',' c_object_tuple )* '}' ;
-
-c_object_tuple : '[' c_object_tuple_items ']' ;
-
-c_object_tuple_items : c_object_tuple_item ( ',' c_object_tuple_item )* ;
-
-c_object_tuple_item: '{' c_primitive_object '}' | CONTAINED_REGEXP;
+c_attribute: (ADL_PATH | rm_attribute_id) c_existence? c_cardinality? ( SYM_MATCHES ('{' (c_objects | '*') '}' | CONTAINED_REGEXP) )? ;
 
 c_includes : SYM_INCLUDE assertion+ ;
 c_excludes : SYM_EXCLUDE assertion+ ;
@@ -85,4 +71,4 @@ unique_mod       : ';' SYM_UNIQUE ;
 multiplicity_mod : ordering_mod | unique_mod ;
 
 c_occurrences : SYM_OCCURRENCES SYM_MATCHES '{' multiplicity '}' ;
-multiplicity  : INTEGER | '*' | INTEGER SYM_INTERVAL_SEP ( INTEGER | '*' ) ;
+multiplicity  : INTEGER | '*' | INTEGER '..' ( INTEGER | '*' ) ;
