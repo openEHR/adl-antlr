@@ -23,8 +23,8 @@ VARIABLE_ID: '$' ALPHA_LC_ID;
 
 // ---------- whitespace & comments ----------
 
-WS         : [ \t\r]+    -> channel(HIDDEN ;
-LINE       : '\r'? '\n'  -> channel(HIDDEN ;  // increment line count
+WS         : [ \t\r]+    -> channel(HIDDEN) ;
+LINE       : '\r'? '\n'  -> channel(HIDDEN) ;  // increment line count
 H_CMT_LINE : '--------' '-'*? '\n'  ;         // long comment line for splitting template overlays
 CMT_LINE   : '--' .*? '\r'? '\n'  -> skip ;   // (increment line count)
 
@@ -55,20 +55,20 @@ ISO8601_DATE      : YEAR '-' MONTH ( '-' DAY )? | YEAR '-' MONTH '-' UNKNOWN_DT 
 ISO8601_TIME      : ( HOUR ':' MINUTE ( ':' SECOND ( SECOND_DEC_SEP DIGIT+ )?)? | HOUR ':' MINUTE ':' UNKNOWN_DT | HOUR ':' UNKNOWN_DT ':' UNKNOWN_DT ) TIMEZONE? ;
 ISO8601_DATE_TIME : ( YEAR '-' MONTH '-' DAY 'T' HOUR (':' MINUTE (':' SECOND ( [SECOND_DEC_SEP DIGIT+ )?)?)? | YEAR '-' MONTH '-' DAY 'T' HOUR ':' MINUTE ':' UNKNOWN_DT | YEAR '-' MONTH '-' DAY 'T' HOUR ':' UNKNOWN_DT ':' UNKNOWN_DT ) TIMEZONE? ;
 fragment TIMEZONE : 'Z' | ('+'|'-') HOUR_MIN ;   // hour offset, e.g. `+0930`, or else literal `Z` indicating +0000.
-fragment YEAR     : [0-9]{4} ;					 // Year in ISO8601:2004 is 4 digits with 0-filling as needed
+fragment YEAR     : [0-9]{4} ;		   // Year in ISO8601:2004 is 4 digits with 0-filling as needed
 fragment MONTH    : ( [0][1-9] | [1][0-2] ) ;    // month in year
 fragment DAY      : ( [0][1-9] | [12][0-9] | [3][0-1] ) ;  // day in month
 fragment HOUR     : ( [01]?[0-9] | [2][0-3] ) ;  // hour in 24 hour clock
 fragment MINUTE   : [0-5][0-9] ;                 // minutes
 fragment HOUR_MIN : ( [01]?[0-9] | [2][0-3] ) [0-5][0-9] ;  // hour / minutes quad digit pattern
 fragment SECOND   : [0-5][0-9] ;                 // seconds
-fragment SECOND_DEC_SEP : '.' | ','
+fragment SECOND_DEC_SEP : '.' | ',' ;
 fragment UNKNOWN_DT  : '??' ;                    // any unknown date/time value, except years.
 
 // ISO8601 DURATION PnYnMnWnDTnnHnnMnn.nnnS 
 // here we allow a deviation from the standard to allow weeks to be // mixed in with the rest since this commonly occurs in medicine
 // TODO: the following will incorrectly match just 'P'
-ISO8601_DURATION : 'P' (DIGIT+ [yY])? (DIGIT+ [mM])? (DIGIT+ [wW])? (DIGIT+[dD])? ('T' (DIGIT+[hH])? (DIGIT+[mM])? (DIGIT+ (SECOND_DEC_SEP DIGIT+)?[sS])?)? ;
+ISO8601_DURATION : '-'?'P' (DIGIT+ [yY])? (DIGIT+ [mM])? (DIGIT+ [wW])? (DIGIT+[dD])? ('T' (DIGIT+[hH])? (DIGIT+[mM])? (DIGIT+ (SECOND_DEC_SEP DIGIT+)?[sS])?)? ;
 
 // ------------------- special word symbols --------------
 SYM_TRUE  : [Tt][Rr][Uu][Ee] ;
@@ -76,9 +76,10 @@ SYM_FALSE : [Ff][Aa][Ll][Ss][Ee] ;
 
 // ---------------------- Identifiers ---------------------
 
-ARCHETYPE_HRID      : ARCHETYPE_HRID_ROOT '.v' VERSION_ID ;
+ARCHETYPE_HRID      : ARCHETYPE_HRID_ROOT '.v' ARCHETYPE_VERSION_ID ;
 ARCHETYPE_REF       : ARCHETYPE_HRID_ROOT '.v' INTEGER ( '.' DIGIT+ )* ;
 fragment ARCHETYPE_HRID_ROOT : (NAMESPACE '::')? IDENTIFIER '-' IDENTIFIER '-' IDENTIFIER '.' LABEL ;
+fragment ARCHETYPE_VERSION_ID: DIGIT+ ('.' DIGIT+ ('.' DIGIT+ ( ( '-rc' | '-alpha' ) ( '.' DIGIT+ )? )?)?)? ;
 VERSION_ID          : DIGIT+ '.' DIGIT+ '.' DIGIT+ ( ( '-rc' | '-alpha' ) ( '.' DIGIT+ )? )? ;
 fragment IDENTIFIER : ALPHA_CHAR WORD_CHAR* ;
 
@@ -143,7 +144,7 @@ fragment URI_SUB_DELIMS: [!$&'()*+,;=];
 
 // According to IETF http://tools.ietf.org/html/rfc1034[RFC 1034] and http://tools.ietf.org/html/rfc1035[RFC 1035],
 // as clarified by http://tools.ietf.org/html/rfc2181[RFC 2181] (section 11)
-fragment NAMESPACE : LABEL ('.' LABEL)+ ;
+fragment NAMESPACE : LABEL ('.' LABEL)* ;
 fragment LABEL : ALPHA_CHAR (NAME_CHAR | URI_PCT_ENCODED)* ;
 
 GUID : HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ ;

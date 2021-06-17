@@ -1,9 +1,10 @@
 //
-//	description: Antlr4 grammar for Object Data Instance Notation (ODIN)
-//	author:      Thomas Beale <thomas.beale@openehr.org>
-//	support:     openEHR Specifications PR tracker <https://openehr.atlassian.net/projects/SPECPR/issues>
-//	copyright:   Copyright (c) 2015 openEHR Foundation
-//	license:     Apache 2.0 License <http://www.apache.org/licenses/LICENSE-2.0.html>
+// description: Antlr4 grammar for Object Data Instance Notation (ODIN)
+// author:      Thomas Beale <thomas.beale@openehr.org>
+// contributors:Pieter Bos <pieter.bos@nedap.com>
+// support:     openEHR Specifications PR tracker <https://openehr.atlassian.net/projects/SPECPR/issues>
+// copyright:   Copyright (c) 2015- openEHR Foundation <http://www.openEHR.org>
+// license:     Apache 2.0 License <http://www.apache.org/licenses/LICENSE-2.0.html>
 //
 
 grammar odin;

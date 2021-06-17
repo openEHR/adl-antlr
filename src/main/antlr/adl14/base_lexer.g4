@@ -62,6 +62,12 @@ fragment PATH_ATTRIBUTE    : AT_CODE | STRING | INTEGER | ARCHETYPE_REF;
 //  ======================= Lexical rules ========================
 //
 
+// ---------- whitespace & comments ----------
+
+WS         : [ \t\r]+    -> channel(HIDDEN) ;
+LINE       : '\n'        -> channel(HIDDEN) ;     // increment line count
+CMT_LINE   : '--' ~[\n\r]*? ('\n'|'\r''\n'|'\r')  -> skip ;  // (increment line count)
+
 // ---------- various ADL2 codes -------
 
 AT_CODE      : 'at' CODE_STR ;
@@ -70,40 +76,38 @@ fragment CODE_STR : ( [0-9][0-9]*) ( '.' ('0' | [1-9][0-9]* ))* ;
 
 
 
-//a
-// regexp can only exist between {}. It can optionally have an assumed value, by adding ;"value"
-CONTAINED_REGEXP: '{'WS* (SLASH_REGEXP | CARET_REGEXP) WS* (';' WS* STRING)? WS* '}';
-fragment SLASH_REGEXP: '/' SLASH_REGEXP_CHAR+ '/';
-fragment SLASH_REGEXP_CHAR: ~[/\n\r] | ESCAPE_SEQ | '\\/';
+// ---------- Delimited Regex matcher ------------
+// In ADL, a regexp can only exist between {}.
+// allows for '/' or '^' delimiters
+// logical form - REGEX: '/' ( '\\/' | ~'/' )+ '/' | '^' ( '\\^' | ~'^' )+ '^';
+// The following is used to ensure REGEXes don't get mixed up with paths, which use '/' chars
 
-fragment CARET_REGEXP: '^' CARET_REGEXP_CHAR+ '^';
-fragment CARET_REGEXP_CHAR: ~[^\n\r] | ESCAPE_SEQ | '\\^';
+CONTAINED_REGEX: '{'WS* (SLASH_REGEX | CARET_REGEX) WS* (';' WS* STRING)? WS* '}';
+fragment SLASH_REGEX: '/' SLASH_REGEX_CHAR+ '/';
+fragment SLASH_REGEX_CHAR: ~[/\n\r] | ESCAPE_SEQ | '\\/';
+
+fragment CARET_REGEX: '^' CARET_REGEX_CHAR+ '^';
+fragment CARET_REGEX_CHAR: ~[^\n\r] | ESCAPE_SEQ | '\\^';
 
 //
 // -------------------------- Lexer patterns --------------------------
 //
 
-// ---------- whitespace & comments ----------
-
-WS         : [ \t\r]+    -> channel(HIDDEN) ;
-LINE       : '\n'        -> channel(HIDDEN) ;     // increment line count
-CMT_LINE   : '--' ~[\n\r]*? ('\n'|'\r''\n'|'\r')  -> skip ;  // (increment line count)
-
 // ---------- ISO8601 Date/Time values ----------
 
-// TODO: consider adding non-standard but unambiguous patterns like YEAR '-' ( MONTH | '??' ) '-' ( DAY | '??' )
-ISO8601_DATE      : YEAR '-' MONTH ( '-' DAY )? ;
-ISO8601_TIME      : HOUR SYM_COLON MINUTE ( SYM_COLON SECOND ( SECOND_DEC_SEP INTEGER )?)? ( TIMEZONE )? ;
-ISO8601_DATE_TIME : YEAR '-' MONTH '-' DAY 'T' HOUR (SYM_COLON MINUTE (SYM_COLON SECOND ( SECOND_DEC_SEP DIGIT+ )?)?)? ( TIMEZONE )? ;
+ISO8601_DATE      : YEAR '-' MONTH ( '-' DAY )? | YEAR '-' MONTH '-' UNKNOWN_DT | YEAR '-' UNKNOWN_DT '-' UNKNOWN_DT ;
+ISO8601_TIME      : ( HOUR ':' MINUTE ( ':' SECOND ( SECOND_DEC_SEP DIGIT+ )?)? | HOUR ':' MINUTE ':' UNKNOWN_DT | HOUR ':' UNKNOWN_DT ':' UNKNOWN_DT ) TIMEZONE? ;
+ISO8601_DATE_TIME : ( YEAR '-' MONTH '-' DAY 'T' HOUR (':' MINUTE (':' SECOND ( [SECOND_DEC_SEP DIGIT+ )?)?)? | YEAR '-' MONTH '-' DAY 'T' HOUR ':' MINUTE ':' UNKNOWN_DT | YEAR '-' MONTH '-' DAY 'T'
 fragment TIMEZONE : 'Z' | ('+'|'-') HOUR_MIN ;   // hour offset, e.g. `+0930`, or else literal `Z` indicating +0000.
-fragment YEAR     : [1-9][0-9]* ;
-fragment MONTH    : ( [0][0-9] | [1][0-2] ) ;    // month in year
-fragment DAY      : ( [012][0-9] | [3][0-2] ) ;  // day in month
+fragment YEAR     : [0-9]{4} ;		   // Year in ISO8601:2004 is 4 digits with 0-filling as needed
+fragment MONTH    : ( [0][1-9] | [1][0-2] ) ;    // month in year
+fragment DAY      : ( [0][1-9] | [12][0-9] | [3][0-1] ) ;  // day in month
 fragment HOUR     : ( [01]?[0-9] | [2][0-3] ) ;  // hour in 24 hour clock
 fragment MINUTE   : [0-5][0-9] ;                 // minutes
 fragment HOUR_MIN : ( [01]?[0-9] | [2][0-3] ) [0-5][0-9] ;  // hour / minutes quad digit pattern
 fragment SECOND   : [0-5][0-9] ;                 // seconds
-fragment SECOND_DEC_SEP : '.' | ','
+fragment SECOND_DEC_SEP : '.' | ',' ;
+fragment UNKNOWN_DT  : '??' ;                    // any unknown date/time value, except years.
 
 // ISO8601 DURATION PnYnMnWnDTnnHnnMnn.nnnS
 // here we allow a deviation from the standard to allow weeks to be // mixed in with the rest since this commonly occurs in medicine
@@ -150,7 +154,7 @@ fragment URI_PORT: DIGIT*;
 
 fragment URI_IP_LITERAL   : '[' URI_IPV6_LITERAL ']'; //TODO, if needed: IPvFuture
 fragment URI_IPV4_ADDRESS : URI_DEC_OCTET '.' URI_DEC_OCTET '.' URI_DEC_OCTET '.' URI_DEC_OCTET ;
-fragment URI_IPV6_LITERAL : HEX_QUAD (SYM_COLON HEX_QUAD )* SYM_COLON SYM_COLON HEX_QUAD (SYM_COLON HEX_QUAD )* ;
+fragment URI_IPV6_LITERAL : HEX_QUAD (':' HEX_QUAD )* '::' HEX_QUAD (':' HEX_QUAD )* ;
 
 fragment URI_DEC_OCTET  : DIGIT | [1-9] DIGIT | '1' DIGIT DIGIT | '2' [0-4] DIGIT | '25' [0-5];
 fragment URI_REG_NAME: (URI_UNRESERVED | URI_PCT_ENCODED | URI_SUB_DELIMS)*;
@@ -179,10 +183,12 @@ fragment URI_RESERVED: URI_GEN_DELIMS | URI_SUB_DELIMS;
 fragment URI_GEN_DELIMS: [:/?#[\]@];
 fragment URI_SUB_DELIMS: [!$&'()*+,;=];
 
+// ------------------ miscellaneous identifier fragments ----------------
+
 // According to IETF http://tools.ietf.org/html/rfc1034[RFC 1034] and http://tools.ietf.org/html/rfc1035[RFC 1035],
 // as clarified by http://tools.ietf.org/html/rfc2181[RFC 2181] (section 11)
 fragment NAMESPACE : LABEL ('.' LABEL)* ;
-fragment LABEL : ALPHA_CHAR (NAME_CHAR|URI_PCT_ENCODED)* ;
+fragment LABEL : ALPHA_CHAR (NAME_CHAR | URI_PCT_ENCODED)* ;
 
 GUID : HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ ;
 OID : DIGIT+ '.' DIGIT+ '.' DIGIT+ ('.' DIGIT+)+;
@@ -207,7 +213,7 @@ fragment ESCAPE_SEQ: '\\' ['"?abfnrtv\\] ;
 
 // ------------------- character fragments ------------------
 
-fragment NAME_CHAR     : WORD_CHAR | [._\-] ;
+fragment NAME_CHAR     : WORD_CHAR | '-' ;
 fragment WORD_CHAR     : ALPHANUM_CHAR | '_' ;
 fragment ALPHANUM_CHAR : ALPHA_CHAR | DIGIT ;
 
