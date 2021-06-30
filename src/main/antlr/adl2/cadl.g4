@@ -8,7 +8,7 @@
 //
 
 grammar cadl;
-import adl_rules, odin, adl_keywords;
+import odin, base_expressions, adl_keywords;
 
 //
 //  ======================= Top-level Objects ========================
@@ -50,7 +50,7 @@ c_regular_primitive_object: rm_type_id '[' ID_CODE ']' c_occurrences? ( SYM_MATC
 // We match regexes here, even though technically they are C_STRING instances. This is because the only
 // workable solution to match a regex unambiguously appears to be to match with enclosing {}, which means
 // as a C_OBJECT alternative, not as a C_STRING.
-c_attribute: (ADL_PATH | attribute_id) c_existence? c_cardinality? ( SYM_MATCHES ('{' c_objects '}' | CONTAINED_REGEXP) )? ;
+c_attribute: (ADL_PATH | rm_attribute_id) c_existence? c_cardinality? ( SYM_MATCHES ('{' c_objects '}' | CONTAINED_REGEXP) )? ;
 
 c_attribute_tuple : '[' rm_attribute_id ( ',' rm_attribute_id )* ']' SYM_MATCHES '{' c_primitive_tuple ( ',' c_primitive_tuple )* '}' ;
 

@@ -8,7 +8,23 @@
 //
 
 grammar base_expressions;
+import cadl_primitives;
 
+//
+// Statements: currently, assignment or assertion
+// TODO: the direct assignment of symbol to path ('mapped_data_ref')
+// is ambiguous; to be reviewed in next version
+//
+
+statement: assignment | assertion;
+
+assignment:
+      VARIABLE_ID ':' ALPHA_UC_ID SYM_ASSIGNMENT mapped_data_ref
+    | VARIABLE_ID ( ':' ALPHA_UC_ID )? SYM_ASSIGNMENT expression
+    ;
+
+assertion: ( identifier ':' )? boolean_expr
+    ;
 
 //
 // General expressions
@@ -17,7 +33,7 @@ grammar base_expressions;
 expression:
       simple_expression
     | for_all_expr
-    | exists_expr
+    | there_exists_expr
     ;
     
 simple_expression:
@@ -54,27 +70,18 @@ boolean_leaf:
     | instance_ref
     | '(' boolean_expr ')'
     | relational_expr
-    | comparison_expr
     | constraint_expr
     | SYM_EXISTS mapped_data_ref
     | SYM_NOT boolean_leaf
     ;
 
 constraint_expr: 
-      mapped_data_ref SYM_MATCHES '{' c_primitive_object '}' 
+      mapped_data_ref SYM_MATCHES '{' c_inline_primitive_object '}'
     ;
 
 boolean_literal:
       SYM_TRUE
     | SYM_FALSE
-    ;
-    
-//
-// Comparison expression between any operand
-//
-
-comparison_expr: 
-      simple_expression equality_binop simple_expression
     ;
 
 //
@@ -82,16 +89,12 @@ comparison_expr:
 //
 
 relational_expr: 
-      arithmetic_expr relational_binop arithmetic_expr
+      arithmetic_expr relational_binop arithmetic_leaf
     ;
 
-equality_binop:
+relational_binop:
       SYM_EQ
     | SYM_NE
-    ;
-    
-relational_binop:
-      equality_binop
     | SYM_GT
     | SYM_LT
     | SYM_LE
@@ -146,8 +149,11 @@ mapped_data_ref: ADL_PATH ;
 
 variable_id: ALPHA_LC_ID ;
 
-function_call: ALPHA_LC_ID '(' ( expression (',' expression)* )? ')' ;
-
-
-	
+function_call: ALPHA_LC_ID '(' ( expression (',' expression)*? )? ')' ;
     
+//
+// ---------- Lexer patterns -----------------
+//
+
+VARIABLE_ID: '$' ALPHA_LC_ID;
+

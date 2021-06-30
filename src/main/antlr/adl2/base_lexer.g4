@@ -16,10 +16,6 @@ fragment ADL_RELATIVE_PATH : ADL_PATH_SEGMENT ('/' ADL_PATH_SEGMENT)+;
 fragment ADL_PATH_SEGMENT      : ALPHA_LC_ID ('[' ADL_PATH_ATTRIBUTE ']')?;
 fragment ADL_PATH_ATTRIBUTE    : ID_CODE | STRING | INTEGER | ARCHETYPE_REF;
 
-// ---------- rule patterns -----------------
-
-VARIABLE_ID: '$' ALPHA_LC_ID;
-
 
 // ---------- whitespace & comments ----------
 
@@ -42,7 +38,7 @@ fragment CODE_STR : ('0' | [1-9][0-9]*) ( '.' ('0' | [1-9][0-9]* ))* ;
 // logical form - REGEX: '/' ( '\\/' | ~'/' )+ '/' | '^' ( '\\^' | ~'^' )+ '^';
 // The following is used to ensure REGEXes don't get mixed up with paths, which use '/' chars
 
-CONTAINED_REGEX: '{'WS* (SLASH_REGEX | CARET_REGEX) WS* (';' WS* STRING)? WS* '}';
+CONTAINED_REGEX: '{' WS* (SLASH_REGEX | CARET_REGEX) WS* (';' WS* STRING)? WS* '}';
 fragment SLASH_REGEX: '/' SLASH_REGEX_CHAR+ '/';
 fragment SLASH_REGEX_CHAR: ~[/\n\r] | ESCAPE_SEQ | '\\/';
 
@@ -53,9 +49,9 @@ fragment CARET_REGEX_CHAR: ~[^\n\r] | ESCAPE_SEQ | '\\^';
 
 ISO8601_DATE      : YEAR '-' MONTH ( '-' DAY )? | YEAR '-' MONTH '-' UNKNOWN_DT | YEAR '-' UNKNOWN_DT '-' UNKNOWN_DT ;
 ISO8601_TIME      : ( HOUR ':' MINUTE ( ':' SECOND ( SECOND_DEC_SEP DIGIT+ )?)? | HOUR ':' MINUTE ':' UNKNOWN_DT | HOUR ':' UNKNOWN_DT ':' UNKNOWN_DT ) TIMEZONE? ;
-ISO8601_DATE_TIME : ( YEAR '-' MONTH '-' DAY 'T' HOUR (':' MINUTE (':' SECOND ( [SECOND_DEC_SEP DIGIT+ )?)?)? | YEAR '-' MONTH '-' DAY 'T' HOUR ':' MINUTE ':' UNKNOWN_DT | YEAR '-' MONTH '-' DAY 'T' HOUR ':' UNKNOWN_DT ':' UNKNOWN_DT ) TIMEZONE? ;
+ISO8601_DATE_TIME : ( YEAR '-' MONTH '-' DAY 'T' HOUR (':' MINUTE (':' SECOND ( SECOND_DEC_SEP DIGIT+ )?)?)? | YEAR '-' MONTH '-' DAY 'T' HOUR ':' MINUTE ':' UNKNOWN_DT | YEAR '-' MONTH '-' DAY 'T' HOUR ':' UNKNOWN_DT ':' UNKNOWN_DT ) TIMEZONE? ;
 fragment TIMEZONE : 'Z' | ('+'|'-') HOUR_MIN ;   // hour offset, e.g. `+0930`, or else literal `Z` indicating +0000.
-fragment YEAR     : [0-9]{4} ;		   // Year in ISO8601:2004 is 4 digits with 0-filling as needed
+fragment YEAR     : [0-9][0-9][0-9][0-9] ;		   // Year in ISO8601:2004 is 4 digits with 0-filling as needed
 fragment MONTH    : ( [0][1-9] | [1][0-2] ) ;    // month in year
 fragment DAY      : ( [0][1-9] | [12][0-9] | [3][0-1] ) ;  // day in month
 fragment HOUR     : ( [01]?[0-9] | [2][0-3] ) ;  // hour in 24 hour clock
@@ -202,12 +198,12 @@ SYM_IMPLIES  : [Ii][Mm][Pp][Ll][Ii][Ee][Ss] | '⇒' ;
 SYM_FOR_ALL: 'for_all' | '∀' ;
 SYM_THERE_EXISTS: 'there_exists' | '∃' ;
 
-SYM_EXISTS: 'exists' | '∃' ;
-SYM_IN: ':' | 'in'
+SYM_EXISTS: 'exists' ;
+SYM_IN: ':' | 'in' ;
 SYM_LIST_CONTINUE: '...' ;
 SYM_INTERVAL_SEP: '..' ;
 
 SYM_MATCHES : [Mm][Aa][Tt][Cc][Hh][Ee][Ss] | [Ii][Ss]'_'[Ii][Nn] | '∈' ;
 
-INCLUDED_LANGUAGE_FRAGMENT: '(' ALPHANUM_CHAR+ ')' (WS|LINE)* '<#' .* '#>';
+INCLUDED_LANGUAGE_FRAGMENT: '(' ALPHANUM_CHAR+ ')' (WS|LINE)* '<#' .*? '#>';
 

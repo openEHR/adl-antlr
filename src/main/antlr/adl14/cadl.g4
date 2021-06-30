@@ -8,7 +8,7 @@
 //
 
 grammar cadl;
-import adl_rules, odin;
+import odin, base_expressions, adl_keywords;
 
 //
 //  ======================= Top-level Objects ========================
@@ -45,7 +45,7 @@ ordinal_term: (integer_value | real_value) '|' c_terminology_code;
 
 c_archetype_root: SYM_USE_ARCHETYPE rm_type_id '[' AT_CODE (SYM_COMMA archetype_ref)? ']' c_occurrences? ( SYM_MATCHES '{' c_attribute+ '}' )? ;
 
-c_complex_object_proxy: SYM_USE_NODE rm_type_id ('[' AT_CODE ']')? c_occurrences? adl_path ;
+c_complex_object_proxy: SYM_USE_NODE rm_type_id ('[' AT_CODE ']')? c_occurrences? ADL_PATH ;
 
 archetype_slot:
       c_archetype_slot_head SYM_MATCHES '{' c_includes? c_excludes? '}'
