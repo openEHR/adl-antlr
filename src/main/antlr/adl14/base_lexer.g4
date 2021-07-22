@@ -184,7 +184,8 @@ fragment HEX_DIGIT : [0-9a-fA-F] ;
 
 // ---------- symbols ----------
 
-SYM_ASSIGNMENT: ':=';
+// allow ::= as an equivalent of := for now
+SYM_ASSIGNMENT: ':=' | '::=';
 
 SYM_GT : '>' ;
 SYM_LT : '<' ;
