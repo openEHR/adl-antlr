@@ -142,12 +142,10 @@ instance_ref:
 
 value_ref:
       mapped_data_ref
-    | variable_id
+    | VARIABLE_ID
     ;
 
 mapped_data_ref: ADL_PATH ;
-
-variable_id: ALPHA_LC_ID ;
 
 function_call: ALPHA_LC_ID '(' ( expression (',' expression)*? )? ')' ;
     
@@ -155,5 +153,5 @@ function_call: ALPHA_LC_ID '(' ( expression (',' expression)*? )? ')' ;
 // ---------- Lexer patterns -----------------
 //
 
-VARIABLE_ID: '$' ALPHA_LC_ID;
+VARIABLE_ID: '$'? ALPHA_LC_ID;
 

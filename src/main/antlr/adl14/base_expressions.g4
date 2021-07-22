@@ -125,17 +125,15 @@ add_op:
 
 instance_ref:
       mapped_data_ref
-    | variable_id
+    | VARIABLE_ID
     ;
 
 mapped_data_ref: ADL_PATH ;
-
-variable_id: ALPHA_LC_ID ;
 
 //
 // ---------- Lexer patterns -----------------
 //
 
-VARIABLE_ID: '$' ALPHA_LC_ID;
+VARIABLE_ID: '$'? ALPHA_LC_ID;
 
     
