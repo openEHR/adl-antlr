@@ -179,32 +179,14 @@ fragment HEX_DIGIT : [0-9a-fA-F] ;
 
 // ---------- symbols ----------
 
-// allow ::= as an equivalent of := for now
-SYM_ASSIGNMENT: ':=' | '::=';
-
 SYM_GT : '>' ;
 SYM_LT : '<' ;
 SYM_LE : '<=' | '≤' ;
 SYM_GE : '>=' | '≥' ;
-SYM_NE : '/=' | '!=' | '≠' ;
-SYM_EQ : '=' ;
 SYM_PLUS_OR_MINUS : '+/-' | '±' ;
 
-SYM_THEN     : [Tt][Hh][Ee][Nn] ;
-SYM_AND      : [Aa][Nn][Dd] | '∧' ;
-SYM_OR       : [Oo][Rr] | '∨' ;
-SYM_XOR      : [Xx][Oo][Rr] ;
-SYM_NOT      : [Nn][Oo][Tt] | '!' | '~' | '¬' ;
-SYM_IMPLIES  : [Ii][Mm][Pp][Ll][Ii][Ee][Ss] | '⇒' ;
-SYM_FOR_ALL: 'for_all' | '∀' ;
-SYM_THERE_EXISTS: 'there_exists' | '∃' ;
-
-SYM_EXISTS: 'exists' ;
-SYM_IN: ':' | 'in' ;
 SYM_LIST_CONTINUE: '...' ;
 SYM_INTERVAL_SEP: '..' ;
-
-SYM_MATCHES : [Mm][Aa][Tt][Cc][Hh][Ee][Ss] | [Ii][Ss]'_'[Ii][Nn] | '∈' ;
 
 INCLUDED_LANGUAGE_FRAGMENT: '(' ALPHANUM_CHAR+ ')' (WS|LINE)* '<#' .*? '#>';
 
