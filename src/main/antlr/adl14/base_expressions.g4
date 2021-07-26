@@ -16,6 +16,8 @@ import cadl_primitives;
 // is ambiguous; to be reviewed in next version
 //
 
+el_text: statement+ ;
+
 statement: variable_declaration |assignment | assertion;
 
 variable_declaration: VARIABLE_ID ':' type_id ( SYM_ASSIGNMENT expression )? ;
@@ -158,4 +160,4 @@ SYM_THERE_EXISTS: 'there_exists' | '∃' ;
 SYM_EXISTS: 'exists' ;
 SYM_MATCHES : [Mm][Aa][Tt][Cc][Hh][Ee][Ss] | [Ii][Ss]'_'[Ii][Nn] | '∈' ;
 
-VARIABLE_ID: '$'? ALPHA_LC_ID;
+VARIABLE_ID: '$' ALPHA_LC_ID;

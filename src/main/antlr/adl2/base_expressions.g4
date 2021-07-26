@@ -15,6 +15,7 @@ import cadl_primitives;
 // TODO: the direct assignment of symbol to path ('mapped_data_ref')
 // is ambiguous; to be reviewed in next version
 //
+el_text: statement+ ;
 
 statement: variable_declaration |assignment | assertion;
 
@@ -64,9 +65,9 @@ boolean_leaf:
 //
 // Universal and existential quantifier
 //
-for_all_expr: SYM_FOR_ALL VARIABLE_ID SYM_IN value_ref '|'? boolean_expr ;
+for_all_expr: SYM_FOR_ALL VARIABLE_ID ':' value_ref '|'? boolean_expr ;
 
-there_exists_expr: SYM_THERE_EXISTS VARIABLE_ID SYM_IN value_ref '|'? boolean_expr ;
+there_exists_expr: SYM_THERE_EXISTS VARIABLE_ID ':' value_ref '|'? boolean_expr ;
 
 // Constraint expressions
 constraint_expr: 
@@ -158,4 +159,4 @@ SYM_THERE_EXISTS: 'there_exists' | '∃' ;
 SYM_EXISTS: 'exists' ;
 SYM_MATCHES : [Mm][Aa][Tt][Cc][Hh][Ee][Ss] | [Ii][Ss]'_'[Ii][Nn] | '∈' ;
 
-VARIABLE_ID: '$'? ALPHA_LC_ID;
+VARIABLE_ID: '$' ALPHA_LC_ID;
