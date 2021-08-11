@@ -23,7 +23,7 @@ attr_vals : ( attr_val ';'? )+ ;
 
 attr_val : odin_object_key '=' object_block ;
 
-odin_object_key : identifier | ALPHA_UNDERSCORE_ID ;
+odin_object_key : ALPHA_UC_ID | ALPHA_UNDERSCORE_ID | rm_attribute_id ;
 
 object_block :
       object_value_block
@@ -42,51 +42,17 @@ key_id :
     | date_time_value
     ;
 
-// ------ leaf types ------
-
-primitive_object :
-      primitive_value 
-    | primitive_list_value 
-    | primitive_interval_value 
-    ;
-
-primitive_value :
-      string_value 
-    | integer_value 
-    | real_value 
-    | boolean_value 
-    | character_value 
-    | term_code_value
-    | date_value
-    | time_value 
-    | date_time_value 
-    | duration_value 
-    | uri_value 
-    ;
-
-primitive_list_value : 
-      string_list_value 
-    | integer_list_value 
-    | real_list_value 
-    | boolean_list_value 
-    | character_list_value 
-    | term_code_list_value
-    | date_list_value
-    | time_list_value 
-    | date_time_list_value 
-    | duration_list_value 
-    ;
-
-primitive_interval_value :
-      integer_interval_value
-    | real_interval_value
-    | date_interval_value
-    | time_interval_value
-    | date_time_interval_value
-    | duration_interval_value
-    ;
-
 object_reference_block : '<' odin_path_list '>' ;
 
-odin_path_list     : odin_path ( ( ',' odin_path )+ | SYM_LIST_CONTINUE )? ;
-odin_path          : '/' | ADL_PATH ;
+odin_path_list  : odin_path ( ( ',' odin_path )+ | SYM_LIST_CONTINUE )? ;
+odin_path       : '/' | ADL_PATH ;
+
+rm_type_id      : ALPHA_UC_ID ( '<' rm_type_id ( ',' rm_type_id )* '>' )? ;
+rm_attribute_id : ALPHA_LC_ID ;
+
+// ---------- whitespace & comments ----------
+
+WS         : [ \t\r]+  -> channel(HIDDEN) ;
+LINE       : '\r'? EOL  -> channel(HIDDEN) ;  // increment line count
+CMT_LINE   : '--' .*? '\r'? EOL  -> skip ;   // (increment line count)
+fragment EOL : '\n' ;

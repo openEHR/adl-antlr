@@ -6,7 +6,53 @@
 //
 
 grammar odin_values;
-import base_patterns;
+import base_lexer;
+
+//
+// ========================= Parser ============================
+//
+
+primitive_object :
+      primitive_value
+    | primitive_list_value
+    | primitive_interval_value
+    ;
+
+primitive_value :
+      string_value
+    | integer_value
+    | real_value
+    | boolean_value
+    | character_value
+    | term_code_value
+    | date_value
+    | time_value
+    | date_time_value
+    | duration_value
+    | uri_value
+    ;
+
+primitive_list_value :
+      string_list_value
+    | integer_list_value
+    | real_list_value
+    | boolean_list_value
+    | character_list_value
+    | term_code_list_value
+    | date_list_value
+    | time_list_value
+    | date_time_list_value
+    | duration_list_value
+    ;
+
+primitive_interval_value :
+      integer_interval_value
+    | real_interval_value
+    | date_interval_value
+    | time_interval_value
+    | date_time_interval_value
+    | duration_interval_value
+    ;
 
 string_value : STRING ;
 string_list_value : string_value ( ( ',' string_value )+ | ',' SYM_LIST_CONTINUE ) ;
@@ -16,6 +62,7 @@ integer_list_value : integer_value ( ( ',' integer_value )+ | ',' SYM_LIST_CONTI
 integer_interval_value :
       '|' SYM_GT? integer_value SYM_INTERVAL_SEP SYM_LT? integer_value '|'
     | '|' relop? integer_value '|'
+    | '|' integer_value SYM_PLUS_OR_MINUS integer_value '|'
     ;
 integer_interval_list_value : integer_interval_value ( ( ',' integer_interval_value )+ | ',' SYM_LIST_CONTINUE ) ;
 
@@ -24,6 +71,7 @@ real_list_value : real_value ( ( ',' real_value )+ | ',' SYM_LIST_CONTINUE ) ;
 real_interval_value :
       '|' SYM_GT? real_value SYM_INTERVAL_SEP SYM_LT? real_value '|'
     | '|' relop? real_value '|'
+    | '|' real_value SYM_PLUS_OR_MINUS real_value '|'
     ;
 real_interval_list_value : real_interval_value ( ( ',' real_interval_value )+ | ',' SYM_LIST_CONTINUE ) ;
 
@@ -38,6 +86,7 @@ date_list_value : date_value ( ( ',' date_value )+ | ',' SYM_LIST_CONTINUE ) ;
 date_interval_value :
       '|' SYM_GT? date_value SYM_INTERVAL_SEP SYM_LT? date_value '|'
     | '|' relop? date_value '|'
+    | '|' date_value SYM_PLUS_OR_MINUS duration_value '|'
     ;
 date_interval_list_value : date_interval_value ( ( ',' date_interval_value )+ | ',' SYM_LIST_CONTINUE ) ;
 
@@ -46,6 +95,7 @@ time_list_value : time_value ( ( ',' time_value )+ | ',' SYM_LIST_CONTINUE ) ;
 time_interval_value :
       '|' SYM_GT? time_value SYM_INTERVAL_SEP SYM_LT? time_value '|'
     | '|' relop? time_value '|'
+    | '|' time_value SYM_PLUS_OR_MINUS duration_value '|'
     ;
 time_interval_list_value : time_interval_value ( ( ',' time_interval_value )+ | ',' SYM_LIST_CONTINUE ) ;
 
@@ -54,6 +104,7 @@ date_time_list_value : date_time_value ( ( ',' date_time_value )+ | ',' SYM_LIST
 date_time_interval_value :
       '|' SYM_GT? date_time_value SYM_INTERVAL_SEP SYM_LT? date_time_value '|'
     | '|' relop? date_time_value '|'
+    | '|' date_time_value SYM_PLUS_OR_MINUS duration_value '|'
     ;
 date_time_interval_list_value : date_time_interval_value ( ( ',' date_time_interval_value )+ | ',' SYM_LIST_CONTINUE ) ;
 
@@ -62,6 +113,7 @@ duration_list_value : duration_value ( ( ',' duration_value )+ | ',' SYM_LIST_CO
 duration_interval_value :
       '|' SYM_GT? duration_value SYM_INTERVAL_SEP SYM_LT? duration_value '|'
     | '|' relop? duration_value '|'
+    | '|' duration_value SYM_PLUS_OR_MINUS duration_value '|'
     ;
 duration_interval_list_value : duration_interval_value ( ( ',' duration_interval_value )+ | ',' SYM_LIST_CONTINUE ) ;
 
@@ -72,4 +124,28 @@ uri_value : URI ;
 
 relop : SYM_GT | SYM_LT | SYM_LE | SYM_GE ;
 
+//
+// ========================= Lexer ============================
+//
 
+// ------ get rid of whitespace inside lists and intervals ------
+WS: [ \t\r]+     -> channel(HIDDEN) ;
+
+// -------------------- symbols for lists ------------------------
+SYM_LIST_CONTINUE: '...' ;
+SYM_COMMA: ',' ;
+
+// ------------------ symbols for intervals ----------------------
+
+SYM_LE : '<=' | '≤' ;
+SYM_GE : '>=' | '≥' ;
+SYM_GT : '>' ;
+SYM_LT : '<' ;
+SYM_PLUS : '+' ;
+SYM_MINUS : '-' ;
+SYM_PLUS_OR_MINUS : '+/-' | '±' ;
+SYM_PERCENT : '%' ;
+SYM_CARAT: '^' ;
+
+SYM_IVL_DELIM: '|' ;
+SYM_IVL_SEP  : '..' ;
