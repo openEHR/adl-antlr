@@ -8,7 +8,7 @@
 //
 
 grammar cadl;
-import odin, base_expressions, adl_keywords;
+import cadl_primitives, odin, base_expressions;
 
 //
 //  ======================= Top-level Objects ========================
@@ -32,7 +32,7 @@ c_regular_object:
     | c_regular_primitive_object
     ;
 
-c_archetype_root: SYM_USE_ARCHETYPE rm_type_id '[' ID_CODE ',' archetype_ref ']' c_occurrences? ;
+c_archetype_root: SYM_USE_ARCHETYPE rm_type_id '[' ID_CODE ',' ARCHETYPE_REF ']' c_occurrences? ;
 
 c_complex_object_proxy: SYM_USE_NODE rm_type_id '[' ID_CODE ']' c_occurrences? ADL_PATH ;
 
@@ -50,7 +50,7 @@ c_regular_primitive_object: rm_type_id '[' ID_CODE ']' c_occurrences? ( SYM_MATC
 // We match regexes here, even though technically they are C_STRING instances. This is because the only
 // workable solution to match a regex unambiguously appears to be to match with enclosing {}, which means
 // as a C_OBJECT alternative, not as a C_STRING.
-c_attribute: (ADL_PATH | rm_attribute_id) c_existence? c_cardinality? ( SYM_MATCHES ('{' c_objects '}' | CONTAINED_REGEXP) )? ;
+c_attribute: (ADL_PATH | rm_attribute_id) c_existence? c_cardinality? ( SYM_MATCHES ('{' c_objects '}' | CONTAINED_REGEX) )? ;
 
 c_attribute_tuple : '[' rm_attribute_id ( ',' rm_attribute_id )* ']' SYM_MATCHES '{' c_primitive_tuple ( ',' c_primitive_tuple )* '}' ;
 
@@ -70,3 +70,25 @@ multiplicity_mod : ordering_mod | unique_mod ;
 
 c_occurrences : SYM_OCCURRENCES SYM_MATCHES '{' multiplicity '}' ;
 multiplicity  : INTEGER | '*' | INTEGER '..' ( INTEGER | '*' ) ;
+
+//
+// ---------- Lexer patterns -----------------
+//
+
+// CADL keywords
+SYM_EXISTENCE   : [Ee][Xx][Ii][Ss][Tt][Ee][Nn][Cc][Ee] ;
+SYM_OCCURRENCES : [Oo][Cc][Cc][Uu][Rr][Rr][Ee][Nn][Cc][Ee][Ss] ;
+SYM_CARDINALITY : [Cc][Aa][Rr][Dd][Ii][Nn][Aa][Ll][Ii][Tt][Yy] ;
+SYM_ORDERED     : [Oo][Rr][Dd][Ee][Rr][Ee][Dd] ;
+SYM_UNORDERED   : [Uu][Nn][Oo][Rr][Dd][Ee][Rr][Ee][Dd] ;
+SYM_UNIQUE      : [Uu][Nn][Ii][Qq][Uu][Ee] ;
+SYM_USE_NODE    : [Uu][Ss][Ee][_][Nn][Oo][Dd][Ee] ;
+SYM_USE_ARCHETYPE : [Uu][Ss][Ee][_][Aa][Rr][Cc][Hh][Ee][Tt][Yy][Pp][Ee] ;
+SYM_ALLOW_ARCHETYPE : [Aa][Ll][Ll][Oo][Ww][_][Aa][Rr][Cc][Hh][Ee][Tt][Yy][Pp][Ee] ;
+SYM_INCLUDE     : [Ii][Nn][Cc][Ll][Uu][Dd][Ee] ;
+SYM_EXCLUDE     : [Ee][Xx][Cc][Ll][Uu][Dd][Ee] ;
+SYM_AFTER       : [Aa][Ff][Tt][Ee][Rr] ;
+SYM_BEFORE      : [Bb][Ee][Ff][Oo][Rr][Ee] ;
+SYM_CLOSED      : [Cc][Ll][Oo][Ss][Ee][Dd] ;
+
+SYM_DEFAULT     : '_'[Dd][Ee][Ff][Aa][Uu][Ll][Tt] ;

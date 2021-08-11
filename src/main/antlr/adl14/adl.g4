@@ -29,7 +29,7 @@ archetype:
     ;
 
 
-specialization_section : SYM_SPECIALIZE archetype_ref ;
+specialization_section : SYM_SPECIALIZE ARCHETYPE_REF ;
 language_section       : SYM_LANGUAGE odin_text ;
 description_section    : SYM_DESCRIPTION odin_text ;
 definition_section     : SYM_DEFINITION c_complex_object ;
@@ -65,3 +65,25 @@ meta_data_tag_build_uid     : 'build_uid' ;
 meta_data_tag_rm_release    : 'rm_release' ;
 meta_data_tag_is_controlled : 'controlled' ;
 meta_data_tag_is_generated  : 'generated' ;
+
+
+//
+// ------------------ lexical patterns -----------------
+//
+
+SYM_ARCHETYPE   : [Aa][Rr][Cc][Hh][Ee][Tt][Yy][Pp][Ee] ;
+
+SYM_SPECIALIZE  : '\n'[Ss][Pp][Ee][Cc][Ii][Aa][Ll][Ii][SsZz][Ee] ;
+SYM_LANGUAGE    : '\n'[Ll][Aa][Nn][Gg][Uu][Aa][Gg][Ee] ;
+SYM_DESCRIPTION : '\n'[Dd][Ee][Ss][Cc][Rr][Ii][Pp][Tt][Ii][Oo][Nn] ;
+SYM_DEFINITION  : '\n'[Dd][Ee][Ff][Ii][Nn][Ii][Tt][Ii][Oo][Nn] ;
+SYM_INVARIANT   : '\n'[Ii][Nn][Vv][Aa][Rr][Ii][Aa][Nn][Tt] ;
+SYM_ONTOLOGY    : '\n'[Oo][Nn][Tt][Oo][Ll][Oo][Gg][Yy] ;
+SYM_ANNOTATIONS : '\n'[Aa][Nn][Nn][Oo][Tt][Aa][Tt][Ii][Oo][Nn][Ss] ;
+
+// ---------- whitespace & comments ----------
+
+WS         : [ \t\r]+   -> channel(HIDDEN) ;
+LINE       : '\r'? EOL  -> channel(HIDDEN) ;  // increment line count
+CMT_LINE   : '--' .*? '\r'? EOL  -> skip ;   // (increment line count)
+fragment EOL : '\n' ;

@@ -21,32 +21,11 @@ fragment PATH_ATTRIBUTE    : AT_CODE | STRING | INTEGER | ARCHETYPE_REF;
 //  ======================= Lexical rules ========================
 //
 
-// ---------- whitespace & comments ----------
-
-WS         : [ \t\r]+    -> channel(HIDDEN) ;
-LINE       : '\n'        -> channel(HIDDEN) ;     // increment line count
-CMT_LINE   : '--' ~[\n\r]*? ('\n'|'\r''\n'|'\r')  -> skip ;  // (increment line count)
-
 // ---------- various ADL2 codes -------
 
 AT_CODE      : 'at' CODE_STR ;
 AC_CODE      : 'ac' CODE_STR ;
 fragment CODE_STR : ( [0-9][0-9]*) ( '.' ('0' | [1-9][0-9]* ))* ;
-
-
-
-// ---------- Delimited Regex matcher ------------
-// In ADL, a regexp can only exist between {}.
-// allows for '/' or '^' delimiters
-// logical form - REGEX: '/' ( '\\/' | ~'/' )+ '/' | '^' ( '\\^' | ~'^' )+ '^';
-// The following is used to ensure REGEXes don't get mixed up with paths, which use '/' chars
-
-CONTAINED_REGEX: '{'WS* (SLASH_REGEX | CARET_REGEX) WS* (';' WS* STRING)? WS* '}';
-fragment SLASH_REGEX: '/' SLASH_REGEX_CHAR+ '/';
-fragment SLASH_REGEX_CHAR: ~[/\n\r] | ESCAPE_SEQ | '\\/';
-
-fragment CARET_REGEX: '^' CARET_REGEX_CHAR+ '^';
-fragment CARET_REGEX_CHAR: ~[^\n\r] | ESCAPE_SEQ | '\\^';
 
 
 // ---------- ISO8601 Date/Time values ----------
@@ -89,8 +68,6 @@ TERM_CODE_REF : '[' TERM_CODE_CHAR+ ( '(' TERM_CODE_CHAR+ ')' )? '::' TERM_CODE_
 fragment TERM_CODE_CHAR: NAME_CHAR | '.';
 
 // --------------------- URIs --------------------
-
-EMBEDDED_URI: '<' ([ \t\r\n]|CMT_LINE)* URI ([ \t\r\n]|CMT_LINE)* '>';
 
 // URIs - simple recogniser based on https://tools.ietf.org/html/rfc3986 and
 // http://www.w3.org/Addressing/URL/5_URI_BNF.html
@@ -182,16 +159,14 @@ fragment DIGIT     : [0-9] ;
 fragment HEX_DIGIT : [0-9a-fA-F] ;
 
 
-// ---------- symbols ----------
+// -------------------- common symbols ---------------------
 
-// allow ::= as an equivalent of := for now
-SYM_ASSIGNMENT: ':=' | '::=';
+SYM_COMMA: ',' ;
+SYM_SEMI_COLON : ';' ;
 
-SYM_GT : '>' ;
-SYM_LT : '<' ;
-SYM_LE : '<=' | '≤' ;
-SYM_GE : '>=' | '≥' ;
-SYM_PLUS_OR_MINUS : '+/-' | '±' ;
-
-SYM_LIST_CONTINUE: '...' ;
-SYM_INTERVAL_SEP: '..' ;
+SYM_LPAREN   : '(';
+SYM_RPAREN   : ')';
+SYM_LBRACKET : '[';
+SYM_RBRACKET : ']';
+SYM_LCURLY   : '{' ;
+SYM_RCURLY   : '}' ;

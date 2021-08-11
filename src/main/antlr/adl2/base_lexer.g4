@@ -17,13 +17,6 @@ fragment ADL_PATH_SEGMENT      : ALPHA_LC_ID ('[' ADL_PATH_ATTRIBUTE ']')?;
 fragment ADL_PATH_ATTRIBUTE    : ID_CODE | STRING | INTEGER | ARCHETYPE_REF;
 
 
-// ---------- whitespace & comments ----------
-
-WS         : [ \t\r]+    -> channel(HIDDEN) ;
-LINE       : '\r'? '\n'  -> channel(HIDDEN) ;  // increment line count
-H_CMT_LINE : '--------' '-'*? '\n'  ;         // long comment line for splitting template overlays
-CMT_LINE   : '--' .*? '\r'? '\n'  -> skip ;   // (increment line count)
-
 // ---------- various ADL2 codes -------
 
 ROOT_ID_CODE : 'id1' '.1'* ;
@@ -31,19 +24,6 @@ ID_CODE      : 'id' CODE_STR ;
 AT_CODE      : 'at' CODE_STR ;
 AC_CODE      : 'ac' CODE_STR ;
 fragment CODE_STR : ('0' | [1-9][0-9]*) ( '.' ('0' | [1-9][0-9]* ))* ;
-
-// ---------- Delimited Regex matcher ------------
-// In ADL, a regexp can only exist between {}.
-// allows for '/' or '^' delimiters
-// logical form - REGEX: '/' ( '\\/' | ~'/' )+ '/' | '^' ( '\\^' | ~'^' )+ '^';
-// The following is used to ensure REGEXes don't get mixed up with paths, which use '/' chars
-
-CONTAINED_REGEX: '{' WS* (SLASH_REGEX | CARET_REGEX) WS* (';' WS* STRING)? WS* '}';
-fragment SLASH_REGEX: '/' SLASH_REGEX_CHAR+ '/';
-fragment SLASH_REGEX_CHAR: ~[/\n\r] | ESCAPE_SEQ | '\\/';
-
-fragment CARET_REGEX: '^' CARET_REGEX_CHAR+ '^';
-fragment CARET_REGEX_CHAR: ~[^\n\r] | ESCAPE_SEQ | '\\^';
 
 // ---------- ISO8601 Date/Time values ----------
 
@@ -86,12 +66,10 @@ fragment TERM_CODE_CHAR: NAME_CHAR | '.';
 
 // --------------------- URIs --------------------
 
-EMBEDDED_URI: '<' ([ \t\r\n]|CMT_LINE)* URI ([ \t\r\n]|CMT_LINE)* '>';
-
 // URI recogniser based on https://tools.ietf.org/html/rfc3986 and
 // http://www.w3.org/Addressing/URL/5_URI_BNF.html
 
-fragment URI : URI_SCHEME ':' URI_HIER_PART ( '?' URI_QUERY )? ('#' URI_FRAGMENT)? ;
+URI : URI_SCHEME ':' URI_HIER_PART ( '?' URI_QUERY )? ('#' URI_FRAGMENT)? ;
 
 fragment URI_HIER_PART : ( '//' URI_AUTHORITY ) URI_PATH_ABEMPTY
     | URI_PATH_ABSOLUTE
@@ -177,16 +155,14 @@ fragment UTF8CHAR    : '\\u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT ;
 fragment DIGIT     : [0-9] ;
 fragment HEX_DIGIT : [0-9a-fA-F] ;
 
-// ---------- symbols ----------
+// -------------------- common symbols ---------------------
 
-SYM_GT : '>' ;
-SYM_LT : '<' ;
-SYM_LE : '<=' | '≤' ;
-SYM_GE : '>=' | '≥' ;
-SYM_PLUS_OR_MINUS : '+/-' | '±' ;
+SYM_COMMA: ',' ;
+SYM_SEMI_COLON : ';' ;
 
-SYM_LIST_CONTINUE: '...' ;
-SYM_INTERVAL_SEP: '..' ;
-
-INCLUDED_LANGUAGE_FRAGMENT: '(' ALPHANUM_CHAR+ ')' (WS|LINE)* '<#' .*? '#>';
-
+SYM_LPAREN   : '(';
+SYM_RPAREN   : ')';
+SYM_LBRACKET : '[';
+SYM_RBRACKET : ']';
+SYM_LCURLY   : '{' ;
+SYM_RCURLY   : '}' ;

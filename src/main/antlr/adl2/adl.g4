@@ -61,11 +61,11 @@ operational_template:
     component_terminologies_section?
     ;
 
-specialize_section  : SYM_SPECIALIZE archetype_ref ;
+specialize_section  : SYM_SPECIALIZE ARCHETYPE_REF ;
 language_section    : SYM_LANGUAGE odin_text ;
 description_section : SYM_DESCRIPTION odin_text ;
 definition_section  : SYM_DEFINITION c_complex_object ;
-rules_section       : SYM_RULES ( statement (';')?)+ ;
+rules_section       : SYM_RULES statement_block ;
 terminology_section : SYM_TERMINOLOGY odin_text ;
 annotations_section : SYM_ANNOTATIONS odin_text ;
 component_terminologies_section: SYM_COMPONENT_TERMINOLOGIES odin_text ;
@@ -79,7 +79,7 @@ meta_data_item:
     | meta_data_tag_rm_release '=' VERSION_ID
     | meta_data_tag_is_controlled
     | meta_data_tag_is_generated
-    | identifier ( '=' meta_data_value )?
+    | ALPHANUM_ID ( '=' meta_data_value )?
     ;
 
 meta_data_value:
@@ -95,3 +95,33 @@ meta_data_tag_rm_release    : 'rm_release' ;
 meta_data_tag_is_controlled : 'controlled' ;
 meta_data_tag_is_generated  : 'generated' ;
 
+//
+// ------------------ lexical patterns -----------------
+//
+
+// ADL keywords
+SYM_ARCHETYPE            : [Aa][Rr][Cc][Hh][Ee][Tt][Yy][Pp][Ee] ;
+SYM_TEMPLATE_OVERLAY     : [Tt][Ee][Mm][Pp][Ll][Aa][Tt][Ee]'_'[Oo][Vv][Ee][Rr][Ll][Aa][Yy] ;
+SYM_TEMPLATE             : [Tt][Ee][Mm][Pp][Ll][Aa][Tt][Ee] ;
+SYM_OPERATIONAL_TEMPLATE : [Oo][Pp][Ee][Rr][Aa][Tt][Ii][Oo][Nn][Aa][Ll]'_'[Tt][Ee][Mm][Pp][Ll][Aa][Tt][Ee] ;
+
+SYM_SPECIALIZE  : '\n'[Ss][Pp][Ee][Cc][Ii][Aa][Ll][Ii][SsZz][Ee] ;
+SYM_LANGUAGE    : '\n'[Ll][Aa][Nn][Gg][Uu][Aa][Gg][Ee] ;
+SYM_DESCRIPTION : '\n'[Dd][Ee][Ss][Cc][Rr][Ii][Pp][Tt][Ii][Oo][Nn] ;
+SYM_DEFINITION  : '\n'[Dd][Ee][Ff][Ii][Nn][Ii][Tt][Ii][Oo][Nn] ;
+SYM_RULES       : '\n'[Rr][Uu][Ll][Ee][Ss] ;
+SYM_TERMINOLOGY : '\n'[Tt][Ee][Rr][Mm][Ii][Nn][Oo][Ll][Oo][Gg][Yy] ;
+SYM_ANNOTATIONS : '\n'[Aa][Nn][Nn][Oo][Tt][Aa][Tt][Ii][Oo][Nn][Ss] ;
+SYM_COMPONENT_TERMINOLOGIES : '\n'[Cc][Oo][Mm][Pp][Oo][Nn][Ee][Nn][Tt]'_'[Tt][Ee][Rr][Mm][Ii][Nn][Oo][Ll][Oo][Gg][Ii][Ee][Ss] ;
+
+// ---------------- meta-data keywords and symbols ---------------
+SYM_EQ         : '=' ;
+ALPHANUM_ID : [a-zA-Z0-9][a-zA-Z0-9_]* ;
+
+// ---------- whitespace & comments ----------
+
+WS         : [ \t\r]+    -> channel(HIDDEN) ;
+LINE       : '\r'? EOL  -> channel(HIDDEN) ;  // increment line count
+H_CMT_LINE : '--------' '-'*? EOL  ;         // long comment line for splitting template overlays
+CMT_LINE   : '--' .*? '\r'? EOL  -> skip ;   // (increment line count)
+fragment EOL : '\n' ;

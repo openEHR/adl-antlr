@@ -8,7 +8,7 @@
 //
 
 grammar cadl_primitives;
-import adl_keywords, odin_values;
+import odin_values;
 
 //
 //  ======================= Parser rules ========================
@@ -46,9 +46,8 @@ c_duration: ( DURATION_CONSTRAINT_PATTERN ( '/' ( duration_interval_value | dura
     ;
 assumed_duration_value: ';' duration_value ;
 
-// Ideally we would match REGEX here as well, but we have to match it including the surrounding
-// {}, so it is matched at the c_attribute level.
-c_string: ( string_value | string_list_value ) assumed_string_value? ;
+c_string: ( string_value | string_list_value | regex_constraint ) assumed_string_value? ;
+regex_constraint: SLASH_REGEX | CARET_REGEX ;
 assumed_string_value: ';' string_value ;
 
 // ADL2 term types: [ac3], [ac3; at5], [at5]
@@ -78,4 +77,16 @@ fragment DAY_PATTERN    : 'dd' | 'DD' | '??' | 'XX' | 'xx'  ;
 fragment HOUR_PATTERN   : 'hh' | 'HH' | '??' | 'XX' | 'xx'  ;
 fragment MINUTE_PATTERN : 'mm' | 'MM' | '??' | 'XX' | 'xx'  ;
 fragment SECOND_PATTERN : 'ss' | 'SS' | '??' | 'XX' | 'xx'  ;
+
+// ---------- Delimited Regex matcher ------------
+// In ADL, a regexp can only exist between {}.
+// allows for '/' or '^' delimiters
+// logical form - REGEX: '/' ( '\\/' | ~'/' )+ '/' | '^' ( '\\^' | ~'^' )+ '^';
+// The following is used to ensure REGEXes don't get mixed up with paths, which use '/' chars
+
+SLASH_REGEX: '/' SLASH_REGEX_CHAR+ '/';
+fragment SLASH_REGEX_CHAR: ~[/\n\r] | ESCAPE_SEQ | '\\/';
+
+CARET_REGEX: '^' CARET_REGEX_CHAR+ '^';
+fragment CARET_REGEX_CHAR: ~[^\n\r] | ESCAPE_SEQ | '\\^';
 

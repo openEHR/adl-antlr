@@ -8,7 +8,7 @@
 //
 
 grammar cadl;
-import odin, base_expressions, adl_keywords;
+import cadl_primitives, odin, base_expressions;
 
 //
 //  ======================= Top-level Objects ========================
@@ -22,9 +22,7 @@ at_type_id: '[' ( AT_CODE ) ']';
 
 c_objects: c_non_primitive_object_ordered+ | c_primitive_object ;
 
-sibling_order: ( SYM_AFTER | SYM_BEFORE ) '[' AT_CODE ']' ;
-
-c_non_primitive_object_ordered: sibling_order? c_non_primitive_object ;
+c_non_primitive_object_ordered: c_non_primitive_object ;
 
 c_non_primitive_object:
       c_complex_object
@@ -43,7 +41,7 @@ assumed_ordinal_value: INTEGER | REAL;
 
 ordinal_term: (integer_value | real_value) '|' c_terminology_code;
 
-c_archetype_root: SYM_USE_ARCHETYPE rm_type_id '[' AT_CODE (SYM_COMMA archetype_ref)? ']' c_occurrences? ( SYM_MATCHES '{' c_attribute+ '}' )? ;
+c_archetype_root: SYM_USE_ARCHETYPE rm_type_id '[' AT_CODE (',' ARCHETYPE_REF)? ']' c_occurrences? ( SYM_MATCHES '{' c_attribute+ '}' )? ;
 
 c_complex_object_proxy: SYM_USE_NODE rm_type_id ('[' AT_CODE ']')? c_occurrences? ADL_PATH ;
 
@@ -54,9 +52,9 @@ archetype_slot:
 
 c_archetype_slot_head: c_archetype_slot_id c_occurrences? ;
 
-c_archetype_slot_id: SYM_ALLOW_ARCHETYPE rm_type_id ('[' AT_CODE ']')? SYM_CLOSED? ;
+c_archetype_slot_id: SYM_ALLOW_ARCHETYPE rm_type_id ('[' AT_CODE ']')? ;
 
-c_attribute: (ADL_PATH | rm_attribute_id) c_existence? c_cardinality? ( SYM_MATCHES ('{' (c_objects | '*') '}' | CONTAINED_REGEXP) )? ;
+c_attribute: (ADL_PATH | rm_attribute_id) c_existence? c_cardinality? ( SYM_MATCHES ('{' (c_objects | '*') '}' | CONTAINED_REGEX) )? ;
 
 c_includes : SYM_INCLUDE assertion+ ;
 c_excludes : SYM_EXCLUDE assertion+ ;
@@ -72,3 +70,23 @@ multiplicity_mod : ordering_mod | unique_mod ;
 
 c_occurrences : SYM_OCCURRENCES SYM_MATCHES '{' multiplicity '}' ;
 multiplicity  : INTEGER | '*' | INTEGER '..' ( INTEGER | '*' ) ;
+
+//
+// ---------- Lexer patterns -----------------
+//
+
+// CADL keywords
+SYM_EXISTENCE   : [Ee][Xx][Ii][Ss][Tt][Ee][Nn][Cc][Ee] ;
+SYM_OCCURRENCES : [Oo][Cc][Cc][Uu][Rr][Rr][Ee][Nn][Cc][Ee][Ss] ;
+SYM_CARDINALITY : [Cc][Aa][Rr][Dd][Ii][Nn][Aa][Ll][Ii][Tt][Yy] ;
+SYM_ORDERED     : [Oo][Rr][Dd][Ee][Rr][Ee][Dd] ;
+SYM_UNORDERED   : [Uu][Nn][Oo][Rr][Dd][Ee][Rr][Ee][Dd] ;
+SYM_UNIQUE      : [Uu][Nn][Ii][Qq][Uu][Ee] ;
+SYM_USE_NODE    : [Uu][Ss][Ee][_][Nn][Oo][Dd][Ee] ;
+SYM_USE_ARCHETYPE : [Uu][Ss][Ee][_][Aa][Rr][Cc][Hh][Ee][Tt][Yy][Pp][Ee] ;
+SYM_ALLOW_ARCHETYPE : [Aa][Ll][Ll][Oo][Ww][_][Aa][Rr][Cc][Hh][Ee][Tt][Yy][Pp][Ee] ;
+SYM_INCLUDE     : [Ii][Nn][Cc][Ll][Uu][Dd][Ee] ;
+SYM_EXCLUDE     : [Ee][Xx][Cc][Ll][Uu][Dd][Ee] ;
+
+SYM_DEFAULT     : '_'[Dd][Ee][Ff][Aa][Uu][Ll][Tt] ;
+
