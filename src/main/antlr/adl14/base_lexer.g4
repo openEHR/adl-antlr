@@ -62,9 +62,15 @@ fragment ARCHETYPE_VERSION_ID: DIGIT+ ('.' DIGIT+ ('.' DIGIT+ ( ( '-rc' | '-alph
 VERSION_ID          : DIGIT+ '.' DIGIT+ '.' DIGIT+ ( ( '-rc' | '-alpha' ) ( '.' DIGIT+ )? )? ;
 fragment IDENTIFIER : ALPHA_CHAR WORD_CHAR* ;
 
+// According to IETF http://tools.ietf.org/html/rfc1034[RFC 1034] and http://tools.ietf.org/html/rfc1035[RFC 1035],
+// as clarified by http://tools.ietf.org/html/rfc2181[RFC 2181] (section 11)
+fragment NAMESPACE : LABEL ('.' LABEL)* ;
+fragment LABEL : ALPHA_CHAR (NAME_CHAR | URI_PCT_ENCODED)* ;
+
 // --------------------- composed primitive types -------------------
 
-TERM_CODE_REF : '[' TERM_CODE_CHAR+ ( '(' TERM_CODE_CHAR+ ')' )? '::' TERM_CODE_CHAR+ ']' ;  // e.g. [ICD10AM(1998)::F23]; [ISO_639-1::en]
+// e.g. [ICD10AM(1998)::F23]; [ISO_639-1::en]
+TERM_CODE_REF : '[' TERM_CODE_CHAR+ ( '(' TERM_CODE_CHAR+ ')' )? '::' TERM_CODE_CHAR+ ']' ;
 fragment TERM_CODE_CHAR: NAME_CHAR | '.';
 
 // --------------------- URIs --------------------
@@ -117,11 +123,6 @@ fragment URI_GEN_DELIMS: [:/?#[\]@];
 fragment URI_SUB_DELIMS: [!$&'()*+,;=];
 
 // ------------------ miscellaneous identifier fragments ----------------
-
-// According to IETF http://tools.ietf.org/html/rfc1034[RFC 1034] and http://tools.ietf.org/html/rfc1035[RFC 1035],
-// as clarified by http://tools.ietf.org/html/rfc2181[RFC 2181] (section 11)
-fragment NAMESPACE : LABEL ('.' LABEL)* ;
-fragment LABEL : ALPHA_CHAR (NAME_CHAR | URI_PCT_ENCODED)* ;
 
 GUID : HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ ;
 OID : DIGIT+ '.' DIGIT+ '.' DIGIT+ ('.' DIGIT+)+;

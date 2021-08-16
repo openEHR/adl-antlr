@@ -1,9 +1,9 @@
 //
 // description: Antlr4 grammar for cADL primitives sub-syntax of Archetype Definition Language (ADL2)
-// author:      Thomas Beale <thomas.beale@openehr.org>
-// contributors:Pieter Bos <pieter.bos@nedap.com>
-// support:     openEHR Specifications PR tracker <https://openehr.atlassian.net/projects/SPECPR/issues>
-// copyright:   Copyright (c) 2015 openEHR Foundation
+//  author:      Thomas Beale <thomas.beale@openehr.org>
+//  contributors:Pieter Bos <pieter.bos@nedap.com>
+//  support:     openEHR Specifications PR tracker <https://openehr.atlassian.net/projects/SPECPR/issues>
+//  copyright:   Copyright (c) 2015- openEHR Foundation <http://www.openEHR.org>
 // license:     Apache 2.0 License <http://www.apache.org/licenses/LICENSE-2.0.html>
 //
 
@@ -14,7 +14,7 @@ import odin_values;
 //  ======================= Parser rules ========================
 //
 
-c_inline_primitive_object:
+c_primitive_object:
       c_integer
     | c_real
     | c_date
@@ -41,7 +41,8 @@ assumed_date_value: ';' date_value ;
 c_time: ( TIME_CONSTRAINT_PATTERN | time_value | time_list_value | time_interval_value | time_interval_list_value ) assumed_time_value? ;
 assumed_time_value: ';' time_value ;
 
-c_duration: ( DURATION_CONSTRAINT_PATTERN ( '/' ( duration_interval_value | duration_value ))?
+c_duration: (
+      DURATION_CONSTRAINT_PATTERN ( ( duration_interval_value | duration_value ))?
     | duration_value | duration_list_value | duration_interval_value | duration_interval_list_value ) assumed_duration_value?
     ;
 assumed_duration_value: ';' duration_value ;
@@ -50,13 +51,18 @@ c_string: ( string_value | string_list_value | regex_constraint ) assumed_string
 regex_constraint: SLASH_REGEX | CARET_REGEX ;
 assumed_string_value: ';' string_value ;
 
-// ADL2 term types: [ac3], [ac3; at5], [at5]
-// NOTE: an assumed at-code (the ';' AT_CODE pattern) can only occur after an ac-code not after the single at-code
-c_terminology_code: '[' ( ( AC_CODE ( ';' AT_CODE )? ) | AT_CODE ) ']' ;
+
+c_terminology_code: c_local_term_code | c_qualified_term_code;
+
+c_local_term_code: '[' ( ( AC_CODE ( ';' AT_CODE )? ) | AT_CODE ) ']' ;
+
+//TERM_CODE_REF clashes a lot and is needed from within odin, unfortunately. Switching lexer modes might be better
+c_qualified_term_code: '[' terminology_id '::' ( (terminology_code ( ',' terminology_code )* ';' terminology_code) )? ']' | TERM_CODE_REF;
+terminology_id: ALPHA_LC_ID | ALPHA_UC_ID ;
+terminology_code: AT_CODE | AC_CODE | ALPHA_LC_ID | ALPHA_UC_ID | INTEGER ;
 
 c_boolean: ( boolean_value | boolean_list_value ) assumed_boolean_value? ;
 assumed_boolean_value: ';' boolean_value ;
-
 
 //
 //  ======================= Lexical rules ========================
@@ -68,7 +74,7 @@ assumed_boolean_value: ';' boolean_value ;
 DATE_CONSTRAINT_PATTERN      : YEAR_PATTERN '-' MONTH_PATTERN '-' DAY_PATTERN ;
 TIME_CONSTRAINT_PATTERN      : HOUR_PATTERN ':' MINUTE_PATTERN ':' SECOND_PATTERN ;
 DATE_TIME_CONSTRAINT_PATTERN : DATE_CONSTRAINT_PATTERN 'T' TIME_CONSTRAINT_PATTERN ;
-DURATION_CONSTRAINT_PATTERN  : 'P' [yY]?[mM]?[Ww]?[dD]? ( 'T' [hH]?[mM]?[sS]? )? ;
+DURATION_CONSTRAINT_PATTERN  : 'P' [yY]?[mM]?[Ww]?[dD]? ( 'T' [hH]?[mM]?[sS]? )? ('/')?;
 
 // date time pattern
 fragment YEAR_PATTERN   : ( 'yyy' 'y'? ) | ( 'YYY' 'Y'? ) ;
@@ -77,6 +83,7 @@ fragment DAY_PATTERN    : 'dd' | 'DD' | '??' | 'XX' | 'xx'  ;
 fragment HOUR_PATTERN   : 'hh' | 'HH' | '??' | 'XX' | 'xx'  ;
 fragment MINUTE_PATTERN : 'mm' | 'MM' | '??' | 'XX' | 'xx'  ;
 fragment SECOND_PATTERN : 'ss' | 'SS' | '??' | 'XX' | 'xx'  ;
+
 
 // ---------- Delimited Regex matcher ------------
 // In ADL, a regexp can only exist between {}.

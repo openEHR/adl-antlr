@@ -61,7 +61,8 @@ fragment IDENTIFIER : ALPHA_CHAR WORD_CHAR* ;
 
 // --------------------- composed primitive types -------------------
 
-TERM_CODE_REF : '[' TERM_CODE_CHAR+ ( '(' TERM_CODE_CHAR+ ')' )? '::' TERM_CODE_CHAR+ ']' ;  // e.g. [ICD10AM(1998)::F23]; [ISO_639-1::en]
+// e.g. [ICD10AM(1998)::F23]; [ISO_639-1::en]
+TERM_CODE_REF : '[' TERM_CODE_CHAR+ ( '(' TERM_CODE_CHAR+ ')' )? '::' TERM_CODE_CHAR+ ']' ;
 fragment TERM_CODE_CHAR: NAME_CHAR | '.';
 
 // --------------------- URIs --------------------

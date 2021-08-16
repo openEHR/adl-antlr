@@ -54,7 +54,7 @@ c_archetype_slot_head: c_archetype_slot_id c_occurrences? ;
 
 c_archetype_slot_id: SYM_ALLOW_ARCHETYPE rm_type_id ('[' AT_CODE ']')? ;
 
-c_attribute: (ADL_PATH | rm_attribute_id) c_existence? c_cardinality? ( SYM_MATCHES ('{' (c_objects | '*') '}' | CONTAINED_REGEX) )? ;
+c_attribute: rm_attribute_id c_existence? c_cardinality? ( SYM_MATCHES '{' (c_objects | '*') '}' )? ;
 
 c_includes : SYM_INCLUDE assertion+ ;
 c_excludes : SYM_EXCLUDE assertion+ ;
