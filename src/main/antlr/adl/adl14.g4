@@ -42,10 +42,10 @@ concept_section:
 meta_data: '(' meta_data_item  (';' meta_data_item )* ')' ;
 
 meta_data_item:
-      meta_data_tag_adl_version '=' (REAL|VERSION_ID)
+      meta_data_tag_adl_version '=' VERSION_ID
     | meta_data_tag_uid '=' GUID
     | meta_data_tag_build_uid '=' GUID
-    | meta_data_tag_rm_release '=' (REAL|VERSION_ID)
+    | meta_data_tag_rm_release '=' VERSION_ID
     | meta_data_tag_is_controlled
     | meta_data_tag_is_generated
     | ALPHANUM_ID ( '=' meta_data_value )?
