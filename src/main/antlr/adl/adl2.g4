@@ -7,14 +7,14 @@
 //  license:     Apache 2.0 License <http://www.apache.org/licenses/LICENSE-2.0.html>
 //
 
-grammar adl;
-import cadl, odin;
+grammar adl2;
+import cadl2, odin;
 
 //
 //  ============== Parser rules ==============
 //
 
-adl: ( authored_archetype | template | template_overlay | operational_template ) EOF ;
+adl2_archetype: ( authored_archetype | template | template_overlay | operational_template ) EOF ;
 
 authored_archetype:
     SYM_ARCHETYPE meta_data?

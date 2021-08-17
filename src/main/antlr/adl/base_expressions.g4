@@ -8,7 +8,7 @@
 //
 
 grammar base_expressions;
-import cadl_primitives, odin_values;
+import cadl2_primitives, odin_values;
 
 //
 //  ======================= Top-level _objects ========================
@@ -24,7 +24,7 @@ declaration:
     | constant_declaration
     ;
 
-variable_declaration: variable_name ':' type_id ( SYM_ASSIGNMENT expression )? ;
+variable_declaration: local_variable ':' type_id ( SYM_ASSIGNMENT expression )? ;
 
 constant_declaration: constant_name ':' type_id  ( SYM_EQ primitive_object )? ;
 
@@ -36,9 +36,9 @@ assignment:
 //
 // The following is the means of binding a data context path to a local variable
 // TODO: remove this rule when proper external bindings are supported
-binding: variable_name SYM_ASSIGNMENT raw_path ;
+binding: local_variable SYM_ASSIGNMENT bound_path ;
 
-local_assignment: variable_name SYM_ASSIGNMENT expression ;
+local_assignment: local_variable SYM_ASSIGNMENT expression ;
 
 assertion: ( ( ALPHA_LC_ID | ALPHA_UC_ID ) ':' )? boolean_expr ;
 
@@ -72,7 +72,7 @@ boolean_leaf:
       boolean_literal
     | for_all_expr
     | there_exists_expr
-    | SYM_EXISTS ( raw_path | variable_sub_path )
+    | SYM_EXISTS ( bound_path | sub_path_local_variable )
     | '(' boolean_expr ')'
     | relational_expr
     | equality_expr
@@ -106,7 +106,7 @@ there_exists_expr: SYM_THERE_EXISTS VARIABLE_ID ( ':' | 'in' ) value_ref '|'? bo
 // may be used within an expression like any other Boolean (hence it
 // is a booleanLeaf).
 // TODO: non-primitive objects might be supported on the RHS in future.
-constraint_expr: ( arithmetic_expr | value_ref ) SYM_MATCHES '{' c_primitive_object '}' ;
+constraint_expr: ( arithmetic_expr | value_ref ) SYM_MATCHES '{' c_inline_primitive_object '}' ;
 
 //
 // _expressions evaluating to arithmetic values, using standard precedence
@@ -119,18 +119,14 @@ arithmetic_expr:
     ;
 
 arithmetic_leaf:
-      arithmetic_literal
-    | value_ref
-    | '(' arithmetic_expr ')'
-    ;
-
-arithmetic_literal:
       integer_value
     | real_value
     | date_value
     | date_time_value
     | time_value
     | duration_value
+    | value_ref
+    | '(' arithmetic_expr ')'
     ;
 
 //
@@ -159,23 +155,23 @@ relational_binop:
 
 //
 // instances references: data references, variables, and function calls.
-// TODO: Remove raw_path from this rule when external binding supported
+// TODO: Remove bound_path from this rule when external binding supported
 //
 value_ref:
       function_call
-    | raw_path
-    | variable_sub_path
-    | variable_name
+    | bound_path
+    | sub_path_local_variable
+    | local_variable
     | constant_name
     ;
 
-variable_name: VARIABLE_ID ;
+local_variable: VARIABLE_ID ;
 
 // TODO: change to [] form, e.g.     book_list [{title.contains("Quixote")}]
-variable_sub_path: VARIABLE_WITH_PATH;
+sub_path_local_variable: VARIABLE_WITH_PATH;
 
 // TODO: Remove this rule when external binding supported
-raw_path: ADL_PATH ;
+bound_path: ADL_PATH ;
 
 constant_name: ALPHA_UC_ID ;
 

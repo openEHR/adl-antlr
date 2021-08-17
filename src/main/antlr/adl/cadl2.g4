@@ -7,8 +7,8 @@
 // license:     Apache 2.0 License <http://www.apache.org/licenses/LICENSE-2.0.html>
 //
 
-grammar cadl;
-import cadl_primitives, odin, base_expressions;
+grammar cadl2;
+import cadl2_primitives, odin, base_expressions;
 
 //
 //  ======================= Top-level Objects ========================

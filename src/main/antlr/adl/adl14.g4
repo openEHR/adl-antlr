@@ -7,14 +7,14 @@
 //  license:     Apache 2.0 License <http://www.apache.org/licenses/LICENSE-2.0.html>
 //
 
-grammar adl;
-import cadl, odin;
+grammar adl14;
+import cadl14, odin;
 
 //
 //  ============== Parser rules ==============
 //
 
-adl: ( archetype) EOF ;
+adl14_archetype: ( archetype) EOF ;
 
 archetype: 
     SYM_ARCHETYPE meta_data?
@@ -43,21 +43,19 @@ meta_data: '(' meta_data_item  (';' meta_data_item )* ')' ;
 
 meta_data_item:
       meta_data_tag_adl_version '=' (REAL|VERSION_ID)
-    | meta_data_tag_uid '=' guid_or_oid
-    | meta_data_tag_build_uid '=' guid_or_oid
+    | meta_data_tag_uid '=' GUID
+    | meta_data_tag_build_uid '=' GUID
     | meta_data_tag_rm_release '=' (REAL|VERSION_ID)
     | meta_data_tag_is_controlled
     | meta_data_tag_is_generated
-    | identifier ( '=' meta_data_value )?
+    | ALPHANUM_ID ( '=' meta_data_value )?
     ;
 
 meta_data_value:
       primitive_value
-    | guid_or_oid
-    | (REAL|VERSION_ID)
+    | GUID
+    | VERSION_ID
     ;
-
-guid_or_oid: (GUID | OID | VERSION_ID); //VERSION_ID is the same as a OID with one or two dots
 
 meta_data_tag_adl_version   : 'adl_version' ;
 meta_data_tag_uid           : 'uid' ;
@@ -80,6 +78,10 @@ SYM_DEFINITION  : '\n'[Dd][Ee][Ff][Ii][Nn][Ii][Tt][Ii][Oo][Nn] ;
 SYM_INVARIANT   : '\n'[Ii][Nn][Vv][Aa][Rr][Ii][Aa][Nn][Tt] ;
 SYM_ONTOLOGY    : '\n'[Oo][Nn][Tt][Oo][Ll][Oo][Gg][Yy] ;
 SYM_ANNOTATIONS : '\n'[Aa][Nn][Nn][Oo][Tt][Aa][Tt][Ii][Oo][Nn][Ss] ;
+
+// ---------------- meta-data keywords and symbols ---------------
+SYM_EQ         : '=' ;
+ALPHANUM_ID : [a-zA-Z0-9][a-zA-Z0-9_]* ;
 
 // ---------- whitespace & comments ----------
 
