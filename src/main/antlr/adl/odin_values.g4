@@ -60,7 +60,7 @@ string_list_value : string_value ( ( ',' string_value )+ | ',' SYM_LIST_CONTINUE
 integer_value : ( '+' | '-' )? INTEGER ;
 integer_list_value : integer_value ( ( ',' integer_value )+ | ',' SYM_LIST_CONTINUE ) ;
 integer_interval_value :
-      '|' SYM_GT? integer_value SYM_INTERVAL_SEP SYM_LT? integer_value '|'
+      '|' SYM_GT? integer_value '..' SYM_LT? integer_value '|'
     | '|' relop? integer_value '|'
     | '|' integer_value SYM_PLUS_OR_MINUS integer_value '|'
     ;
@@ -69,7 +69,7 @@ integer_interval_list_value : integer_interval_value ( ( ',' integer_interval_va
 real_value : ( '+' | '-' )? REAL ;
 real_list_value : real_value ( ( ',' real_value )+ | ',' SYM_LIST_CONTINUE ) ;
 real_interval_value :
-      '|' SYM_GT? real_value SYM_INTERVAL_SEP SYM_LT? real_value '|'
+      '|' SYM_GT? real_value '..' SYM_LT? real_value '|'
     | '|' relop? real_value '|'
     | '|' real_value SYM_PLUS_OR_MINUS real_value '|'
     ;
@@ -84,7 +84,7 @@ character_list_value : character_value ( ( ',' character_value )+ | ',' SYM_LIST
 date_value : ISO8601_DATE ;
 date_list_value : date_value ( ( ',' date_value )+ | ',' SYM_LIST_CONTINUE ) ;
 date_interval_value :
-      '|' SYM_GT? date_value SYM_INTERVAL_SEP SYM_LT? date_value '|'
+      '|' SYM_GT? date_value '..' SYM_LT? date_value '|'
     | '|' relop? date_value '|'
     | '|' date_value SYM_PLUS_OR_MINUS duration_value '|'
     ;
@@ -93,7 +93,7 @@ date_interval_list_value : date_interval_value ( ( ',' date_interval_value )+ | 
 time_value : ISO8601_TIME ;
 time_list_value : time_value ( ( ',' time_value )+ | ',' SYM_LIST_CONTINUE ) ;
 time_interval_value :
-      '|' SYM_GT? time_value SYM_INTERVAL_SEP SYM_LT? time_value '|'
+      '|' SYM_GT? time_value '..' SYM_LT? time_value '|'
     | '|' relop? time_value '|'
     | '|' time_value SYM_PLUS_OR_MINUS duration_value '|'
     ;
@@ -102,7 +102,7 @@ time_interval_list_value : time_interval_value ( ( ',' time_interval_value )+ | 
 date_time_value : ISO8601_DATE_TIME ;
 date_time_list_value : date_time_value ( ( ',' date_time_value )+ | ',' SYM_LIST_CONTINUE ) ;
 date_time_interval_value :
-      '|' SYM_GT? date_time_value SYM_INTERVAL_SEP SYM_LT? date_time_value '|'
+      '|' SYM_GT? date_time_value '..' SYM_LT? date_time_value '|'
     | '|' relop? date_time_value '|'
     | '|' date_time_value SYM_PLUS_OR_MINUS duration_value '|'
     ;
@@ -111,7 +111,7 @@ date_time_interval_list_value : date_time_interval_value ( ( ',' date_time_inter
 duration_value : ISO8601_DURATION ;
 duration_list_value : duration_value ( ( ',' duration_value )+ | ',' SYM_LIST_CONTINUE ) ;
 duration_interval_value :
-      '|' SYM_GT? duration_value SYM_INTERVAL_SEP SYM_LT? duration_value '|'
+      '|' SYM_GT? duration_value '..' SYM_LT? duration_value '|'
     | '|' relop? duration_value '|'
     | '|' duration_value SYM_PLUS_OR_MINUS duration_value '|'
     ;
