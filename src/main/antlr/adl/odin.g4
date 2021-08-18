@@ -49,10 +49,3 @@ odin_path       : '/' | ADL_PATH ;
 
 rm_type_id      : ALPHA_UC_ID ( '<' rm_type_id ( ',' rm_type_id )* '>' )? ;
 rm_attribute_id : ALPHA_LC_ID ;
-
-// ---------- whitespace & comments ----------
-
-WS         : [ \t\r]+  -> channel(HIDDEN) ;
-LINE       : '\r'? EOL  -> channel(HIDDEN) ;  // increment line count
-CMT_LINE   : '--' .*? '\r'? EOL  -> skip ;   // (increment line count)
-fragment EOL : '\n' ;

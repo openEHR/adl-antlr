@@ -123,29 +123,3 @@ term_code_list_value : term_code_value ( ( ',' term_code_value )+ | ',' SYM_LIST
 uri_value : URI ;
 
 relop : SYM_GT | SYM_LT | SYM_LE | SYM_GE ;
-
-//
-// ========================= Lexer ============================
-//
-
-// ------ get rid of whitespace inside lists and intervals ------
-WS: [ \t\r]+     -> channel(HIDDEN) ;
-
-// -------------------- symbols for lists ------------------------
-SYM_LIST_CONTINUE: '...' ;
-SYM_COMMA: ',' ;
-
-// ------------------ symbols for intervals ----------------------
-
-SYM_LE : '<=' | '≤' ;
-SYM_GE : '>=' | '≥' ;
-SYM_GT : '>' ;
-SYM_LT : '<' ;
-SYM_PLUS : '+' ;
-SYM_MINUS : '-' ;
-SYM_PLUS_OR_MINUS : '+/-' | '±' ;
-SYM_PERCENT : '%' ;
-SYM_CARAT: '^' ;
-
-SYM_IVL_DELIM: '|' ;
-SYM_IVL_SEP  : '..' ;

@@ -32,7 +32,9 @@ c_regular_object:
     | c_regular_primitive_object
     ;
 
-c_archetype_root: SYM_USE_ARCHETYPE rm_type_id '[' ID_CODE ',' ARCHETYPE_REF ']' c_occurrences? ;
+c_archetype_root: SYM_USE_ARCHETYPE rm_type_id '[' ID_CODE ',' archetype_ref ']' c_occurrences? ;
+
+archetype_ref : ARCHETYPE_HRID | ARCHETYPE_REF ;
 
 c_complex_object_proxy: SYM_USE_NODE rm_type_id '[' ID_CODE ']' c_occurrences? ADL_PATH ;
 
@@ -74,21 +76,3 @@ multiplicity  : INTEGER | '*' | INTEGER '..' ( INTEGER | '*' ) ;
 //
 // ---------- Lexer patterns -----------------
 //
-
-// CADL keywords
-SYM_EXISTENCE   : [Ee][Xx][Ii][Ss][Tt][Ee][Nn][Cc][Ee] ;
-SYM_OCCURRENCES : [Oo][Cc][Cc][Uu][Rr][Rr][Ee][Nn][Cc][Ee][Ss] ;
-SYM_CARDINALITY : [Cc][Aa][Rr][Dd][Ii][Nn][Aa][Ll][Ii][Tt][Yy] ;
-SYM_ORDERED     : [Oo][Rr][Dd][Ee][Rr][Ee][Dd] ;
-SYM_UNORDERED   : [Uu][Nn][Oo][Rr][Dd][Ee][Rr][Ee][Dd] ;
-SYM_UNIQUE      : [Uu][Nn][Ii][Qq][Uu][Ee] ;
-SYM_USE_NODE    : [Uu][Ss][Ee][_][Nn][Oo][Dd][Ee] ;
-SYM_USE_ARCHETYPE : [Uu][Ss][Ee][_][Aa][Rr][Cc][Hh][Ee][Tt][Yy][Pp][Ee] ;
-SYM_ALLOW_ARCHETYPE : [Aa][Ll][Ll][Oo][Ww][_][Aa][Rr][Cc][Hh][Ee][Tt][Yy][Pp][Ee] ;
-SYM_INCLUDE     : [Ii][Nn][Cc][Ll][Uu][Dd][Ee] ;
-SYM_EXCLUDE     : [Ee][Xx][Cc][Ll][Uu][Dd][Ee] ;
-SYM_AFTER       : [Aa][Ff][Tt][Ee][Rr] ;
-SYM_BEFORE      : [Bb][Ee][Ff][Oo][Rr][Ee] ;
-SYM_CLOSED      : [Cc][Ll][Oo][Ss][Ee][Dd] ;
-
-SYM_DEFAULT     : '_'[Dd][Ee][Ff][Aa][Uu][Ll][Tt] ;

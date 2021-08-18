@@ -83,9 +83,3 @@ SYM_ANNOTATIONS : '\n'[Aa][Nn][Nn][Oo][Tt][Aa][Tt][Ii][Oo][Nn][Ss] ;
 SYM_EQ         : '=' ;
 ALPHANUM_ID : [a-zA-Z0-9][a-zA-Z0-9_]* ;
 
-// ---------- whitespace & comments ----------
-
-WS         : [ \t\r]+   -> channel(HIDDEN) ;
-LINE       : '\r'? EOL  -> channel(HIDDEN) ;  // increment line count
-CMT_LINE   : '--' .*? '\r'? EOL  -> skip ;   // (increment line count)
-fragment EOL : '\n' ;
