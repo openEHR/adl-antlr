@@ -8,7 +8,7 @@
 //
 
 grammar cadl2_primitives;
-import odin_values;
+import adl_keywords, odin_values;
 
 //
 //  ======================= Parser rules ========================
@@ -46,8 +46,7 @@ c_duration: ( DURATION_CONSTRAINT_PATTERN ( '/' ( duration_interval_value | dura
     ;
 assumed_duration_value: ';' duration_value ;
 
-c_string: ( string_value | string_list_value | regex_constraint ) assumed_string_value? ;
-regex_constraint: SLASH_REGEX | CARET_REGEX ;
+c_string: ( string_value | string_list_value ) assumed_string_value? ;
 assumed_string_value: ';' string_value ;
 
 // ADL2 term types: [ac3], [ac3; at5], [at5]
@@ -57,36 +56,4 @@ c_terminology_code: '[' ( AC_CODE ( ';' AT_CODE )? | AT_CODE ) ']' ;
 c_boolean: ( boolean_value | boolean_list_value ) assumed_boolean_value? ;
 assumed_boolean_value: ';' boolean_value ;
 
-
-//
-//  ======================= Lexical rules ========================
-//
-
-
-// ---------- ISO8601-based date/time/duration constraint patterns
-
-DATE_CONSTRAINT_PATTERN      : YEAR_PATTERN '-' MONTH_PATTERN '-' DAY_PATTERN ;
-TIME_CONSTRAINT_PATTERN      : HOUR_PATTERN ':' MINUTE_PATTERN ':' SECOND_PATTERN ;
-DATE_TIME_CONSTRAINT_PATTERN : DATE_CONSTRAINT_PATTERN 'T' TIME_CONSTRAINT_PATTERN ;
-DURATION_CONSTRAINT_PATTERN  : 'P' [yY]?[mM]?[Ww]?[dD]? ( 'T' [hH]?[mM]?[sS]? )? ;
-
-// date time pattern
-fragment YEAR_PATTERN   : ( 'yyy' 'y'? ) | ( 'YYY' 'Y'? ) ;
-fragment MONTH_PATTERN  : 'mm' | 'MM' | '??' | 'XX' | 'xx' ;
-fragment DAY_PATTERN    : 'dd' | 'DD' | '??' | 'XX' | 'xx'  ;
-fragment HOUR_PATTERN   : 'hh' | 'HH' | '??' | 'XX' | 'xx'  ;
-fragment MINUTE_PATTERN : 'mm' | 'MM' | '??' | 'XX' | 'xx'  ;
-fragment SECOND_PATTERN : 'ss' | 'SS' | '??' | 'XX' | 'xx'  ;
-
-// ---------- Delimited Regex matcher ------------
-// In ADL, a regexp can only exist between {}.
-// allows for '/' or '^' delimiters
-// logical form - REGEX: '/' ( '\\/' | ~'/' )+ '/' | '^' ( '\\^' | ~'^' )+ '^';
-// The following is used to ensure REGEXes don't get mixed up with paths, which use '/' chars
-
-SLASH_REGEX: '/' SLASH_REGEX_CHAR+ '/';
-fragment SLASH_REGEX_CHAR: ~[/\n\r] | ESCAPE_SEQ | '\\/';
-
-CARET_REGEX: '^' CARET_REGEX_CHAR+ '^';
-fragment CARET_REGEX_CHAR: ~[^\n\r] | ESCAPE_SEQ | '\\^';
 

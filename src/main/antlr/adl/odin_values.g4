@@ -29,7 +29,6 @@ primitive_value :
     | time_value
     | date_time_value
     | duration_value
-    | uri_value
     ;
 
 primitive_list_value :
@@ -120,32 +119,4 @@ duration_interval_list_value : duration_interval_value ( ( ',' duration_interval
 term_code_value : TERM_CODE_REF ;
 term_code_list_value : term_code_value ( ( ',' term_code_value )+ | ',' SYM_LIST_CONTINUE ) ;
 
-uri_value : URI ;
-
 relop : SYM_GT | SYM_LT | SYM_LE | SYM_GE ;
-
-//
-// ========================= Lexer ============================
-//
-
-// ------ get rid of whitespace inside lists and intervals ------
-WS: [ \t\r]+     -> channel(HIDDEN) ;
-
-// -------------------- symbols for lists ------------------------
-SYM_LIST_CONTINUE: '...' ;
-SYM_COMMA: ',' ;
-
-// ------------------ symbols for intervals ----------------------
-
-SYM_LE : '<=' | '≤' ;
-SYM_GE : '>=' | '≥' ;
-SYM_GT : '>' ;
-SYM_LT : '<' ;
-SYM_PLUS : '+' ;
-SYM_MINUS : '-' ;
-SYM_PLUS_OR_MINUS : '+/-' | '±' ;
-SYM_PERCENT : '%' ;
-SYM_CARAT: '^' ;
-
-SYM_IVL_DELIM: '|' ;
-SYM_IVL_SEP  : '..' ;

@@ -7,6 +7,19 @@
 
 lexer grammar base_lexer;
 
+// ---------- whitespace & comments ----------
+
+WS         : [ \t\r]+    -> channel(HIDDEN) ;
+LINE       : '\r'? EOL  -> channel(HIDDEN) ;  // increment line count
+CMT_LINE   : '--' .*? '\r'? EOL  -> skip ;   // (increment line count)
+fragment EOL : '\n' ;
+
+
+// -------------- template overlay cannot be handled in a more simple way because it includes the comment line
+SYM_TEMPLATE_OVERLAY : H_CMT_LINE (WS|LINE)* SYM_TEMPLATE_OVERLAY_ONLY;
+fragment H_CMT_LINE : '--------' '-'*? ('\n'|'\r''\n'|'\r')  ;  // special type of comment for splitting template overlays
+fragment SYM_TEMPLATE_OVERLAY_ONLY     : [Tt][Ee][Mm][Pp][Ll][Aa][Tt][Ee]'_'[Oo][Vv][Ee][Rr][Ll][Aa][Yy] ;
+
 // ---------- path patterns -----------
 
 ADL_PATH : ADL_ABSOLUTE_PATH | ADL_RELATIVE_PATH;
@@ -14,8 +27,38 @@ fragment ADL_ABSOLUTE_PATH : ('/' ADL_PATH_SEGMENT)+;
 fragment ADL_RELATIVE_PATH : ADL_PATH_SEGMENT ('/' ADL_PATH_SEGMENT)+;
 
 fragment ADL_PATH_SEGMENT      : ALPHA_LC_ID ('[' ADL_PATH_ATTRIBUTE ']')?;
-fragment ADL_PATH_ATTRIBUTE    : ID_CODE | STRING | INTEGER | ARCHETYPE_REF;
+fragment ADL_PATH_ATTRIBUTE    : ID_CODE | STRING | INTEGER | ARCHETYPE_REF | ARCHETYPE_HRID;
 
+
+// ---------- ISO8601-based date/time/duration constraint patterns
+
+DATE_CONSTRAINT_PATTERN      : YEAR_PATTERN '-' MONTH_PATTERN '-' DAY_PATTERN ;
+TIME_CONSTRAINT_PATTERN      : HOUR_PATTERN ':' MINUTE_PATTERN ':' SECOND_PATTERN ;
+DATE_TIME_CONSTRAINT_PATTERN : DATE_CONSTRAINT_PATTERN 'T' TIME_CONSTRAINT_PATTERN ;
+DURATION_CONSTRAINT_PATTERN  : 'P' [yY]?[mM]?[Ww]?[dD]? ( 'T' [hH]?[mM]?[sS]? )? ;
+
+// date time pattern
+fragment YEAR_PATTERN   : ( 'yyy' 'y'? ) | ( 'YYY' 'Y'? ) ;
+fragment MONTH_PATTERN  : 'mm' | 'MM' | '??' | 'XX' | 'xx' ;
+fragment DAY_PATTERN    : 'dd' | 'DD' | '??' | 'XX' | 'xx'  ;
+fragment HOUR_PATTERN   : 'hh' | 'HH' | '??' | 'XX' | 'xx'  ;
+fragment MINUTE_PATTERN : 'mm' | 'MM' | '??' | 'XX' | 'xx'  ;
+fragment SECOND_PATTERN : 'ss' | 'SS' | '??' | 'XX' | 'xx'  ;
+
+// ---------- Delimited Regex matcher ------------
+// In ADL, a regexp can only exist between {}.
+// allows for '/' or '^' delimiters
+// logical form - REGEX: '/' ( '\\/' | ~'/' )+ '/' | '^' ( '\\^' | ~'^' )+ '^';
+// The following is used to ensure REGEXes don't get mixed up with paths, which use '/' chars
+
+//a
+// regexp can only exist between {}. It can optionally have an assumed value, by adding ;"value"
+CONTAINED_REGEXP: '{'WS* (SLASH_REGEXP | CARET_REGEXP) WS* (';' WS* STRING)? WS* '}';
+fragment SLASH_REGEXP: '/' SLASH_REGEXP_CHAR+ '/';
+fragment SLASH_REGEXP_CHAR: ~[/\n\r] | ESCAPE_SEQ | '\\/';
+
+fragment CARET_REGEXP: '^' CARET_REGEXP_CHAR+ '^';
+fragment CARET_REGEXP_CHAR: ~[^\n\r] | ESCAPE_SEQ | '\\^';
 
 // ---------- various ADL2 codes -------
 
@@ -69,8 +112,9 @@ fragment TERM_CODE_CHAR: NAME_CHAR | '.';
 
 // URI recogniser based on https://tools.ietf.org/html/rfc3986 and
 // http://www.w3.org/Addressing/URL/5_URI_BNF.html
+EMBEDDED_URI: '<' ([ \t\r\n]|CMT_LINE)* URI ([ \t\r\n]|CMT_LINE)* '>';
 
-URI : URI_SCHEME ':' URI_HIER_PART ( '?' URI_QUERY )? ('#' URI_FRAGMENT)? ;
+fragment URI : URI_SCHEME ':' URI_HIER_PART ( '?' URI_QUERY )? ('#' URI_FRAGMENT)? ;
 
 fragment URI_HIER_PART : ( '//' URI_AUTHORITY ) URI_PATH_ABEMPTY
     | URI_PATH_ABSOLUTE
@@ -86,7 +130,7 @@ fragment URI_PORT: DIGIT*;
 
 fragment URI_IP_LITERAL   : '[' URI_IPV6_LITERAL ']'; //TODO, if needed: IPvFuture
 fragment URI_IPV4_ADDRESS : URI_DEC_OCTET '.' URI_DEC_OCTET '.' URI_DEC_OCTET '.' URI_DEC_OCTET ;
-fragment URI_IPV6_LITERAL : HEX_QUAD (':' HEX_QUAD )* '::' HEX_QUAD (':' HEX_QUAD )* ;
+fragment URI_IPV6_LITERAL : HEX_QUAD (':' HEX_QUAD )* ':' ':' HEX_QUAD (':' HEX_QUAD )* ;
 
 fragment URI_DEC_OCTET  : DIGIT | [1-9] DIGIT | '1' DIGIT DIGIT | '2' [0-4] DIGIT | '25' [0-5];
 fragment URI_REG_NAME: (URI_UNRESERVED | URI_PCT_ENCODED | URI_SUB_DELIMS)*;
@@ -112,15 +156,15 @@ fragment URI_PCT_ENCODED : '%' HEX_DIGIT HEX_DIGIT ;
 
 fragment URI_UNRESERVED: ALPHA_CHAR | DIGIT | '-' | '.' | '_' | '~';
 fragment URI_RESERVED: URI_GEN_DELIMS | URI_SUB_DELIMS;
-fragment URI_GEN_DELIMS: [:/?#[\]@];
-fragment URI_SUB_DELIMS: [!$&'()*+,;=];
-
-// ------------------ miscellaneous identifier fragments ----------------
+fragment URI_GEN_DELIMS: ':' | '/' | '?' | '#' | '[' | ']' | '@'; //TODO: migrate to [/?#...] notation
+fragment URI_SUB_DELIMS: '!' | '$' | '&' | '\'' | '(' | ')'
+                         | '*' | '+' | ',' | ';' | '=';
 
 // According to IETF http://tools.ietf.org/html/rfc1034[RFC 1034] and http://tools.ietf.org/html/rfc1035[RFC 1035],
 // as clarified by http://tools.ietf.org/html/rfc2181[RFC 2181] (section 11)
 fragment NAMESPACE : LABEL ('.' LABEL)* ;
-fragment LABEL : ALPHA_CHAR (NAME_CHAR | URI_PCT_ENCODED)* ;
+fragment LABEL : ALPHA_CHAR (NAME_CHAR|URI_PCT_ENCODED)* ;
+
 
 GUID : HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ '-' HEX_DIGIT+ ;
 
@@ -167,3 +211,38 @@ SYM_LBRACKET : '[';
 SYM_RBRACKET : ']';
 SYM_LCURLY   : '{' ;
 SYM_RCURLY   : '}' ;
+
+// --------- symbols ----------
+SYM_ASSIGNMENT: ':=' | '::=' ;
+
+SYM_NE : '/=' | '!=' | '≠' ;
+SYM_EQ : '=' ;
+SYM_GT : '>' ;
+SYM_LT : '<' ;
+SYM_LE : '<=' | '≤' ;
+SYM_GE : '>=' | '≥' ;
+
+// TODO: remove when [] path predicates supported
+VARIABLE_WITH_PATH: VARIABLE_ID ADL_ABSOLUTE_PATH ;
+
+VARIABLE_ID: '$' ALPHA_LC_ID ;
+
+
+//
+// ========================= Lexer ============================
+//
+
+// -------------------- symbols for lists ------------------------
+SYM_LIST_CONTINUE: '...' ;
+
+// ------------------ symbols for intervals ----------------------
+
+SYM_PLUS : '+' ;
+SYM_MINUS : '-' ;
+SYM_PLUS_OR_MINUS : '+/-' | '±' ;
+SYM_PERCENT : '%' ;
+SYM_CARAT: '^' ;
+
+SYM_IVL_DELIM: '|' ;
+SYM_IVL_SEP  : '..' ;
+
