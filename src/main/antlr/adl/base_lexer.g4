@@ -33,17 +33,18 @@ fragment ADL_PATH_ATTRIBUTE    : ID_CODE | STRING | INTEGER | ARCHETYPE_REF | AR
 // ---------- ISO8601-based date/time/duration constraint patterns
 
 DATE_CONSTRAINT_PATTERN      : YEAR_PATTERN '-' MONTH_PATTERN '-' DAY_PATTERN ;
-TIME_CONSTRAINT_PATTERN      : HOUR_PATTERN ':' MINUTE_PATTERN ':' SECOND_PATTERN ;
+TIME_CONSTRAINT_PATTERN      : HOUR_PATTERN ':' MINUTE_PATTERN ':' SECOND_PATTERN TZ_PATTERN? ;
 DATE_TIME_CONSTRAINT_PATTERN : DATE_CONSTRAINT_PATTERN 'T' TIME_CONSTRAINT_PATTERN ;
-DURATION_CONSTRAINT_PATTERN  : 'P' [yY]?[mM]?[Ww]?[dD]? ( 'T' [hH]?[mM]?[sS]? )? ;
 
-// date time pattern
-fragment YEAR_PATTERN   : ( 'yyy' 'y'? ) | ( 'YYY' 'Y'? ) ;
+fragment YEAR_PATTERN   : 'yyyy' | 'YYYY' | 'yyy' | 'YYY' ;
 fragment MONTH_PATTERN  : 'mm' | 'MM' | '??' | 'XX' | 'xx' ;
 fragment DAY_PATTERN    : 'dd' | 'DD' | '??' | 'XX' | 'xx'  ;
 fragment HOUR_PATTERN   : 'hh' | 'HH' | '??' | 'XX' | 'xx'  ;
 fragment MINUTE_PATTERN : 'mm' | 'MM' | '??' | 'XX' | 'xx'  ;
 fragment SECOND_PATTERN : 'ss' | 'SS' | '??' | 'XX' | 'xx'  ;
+fragment TZ_PATTERN     : '±' ('hh' | 'HH') (':'? ('mm' | 'MM'))? | 'Z' ;
+
+DURATION_CONSTRAINT_PATTERN  : 'P' [yY]?[mM]?[Ww]?[dD]? ( 'T' [hH]?[mM]?[sS]? )? ;
 
 // ---------- Delimited Regex matcher ------------
 // In ADL, a regexp can only exist between {}.
