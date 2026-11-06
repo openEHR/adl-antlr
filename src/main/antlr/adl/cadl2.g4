@@ -32,7 +32,7 @@ c_regular_object:
     | c_regular_primitive_object
     ;
 
-c_archetype_root: SYM_USE_ARCHETYPE rm_type_id '[' ID_CODE ',' archetype_ref ']' c_occurrences? ;
+c_archetype_root: SYM_USE_ARCHETYPE rm_type_id '[' ID_CODE ',' archetype_ref ']' c_occurrences? ( SYM_MATCHES '{' c_attribute_def+ default_value? '}' )? ;
 
 archetype_ref : ARCHETYPE_HRID | ARCHETYPE_REF ;
 
