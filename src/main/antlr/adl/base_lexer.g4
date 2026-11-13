@@ -74,13 +74,13 @@ fragment CODE_STR : ('0' | [1-9][0-9]*) ( '.' ('0' | [1-9][0-9]* ))* ;
 ISO8601_DATE      : YEAR '-' MONTH ( '-' DAY )? | YEAR '-' MONTH '-' UNKNOWN_DT | YEAR '-' UNKNOWN_DT '-' UNKNOWN_DT ;
 ISO8601_TIME      : ( HOUR ':' MINUTE ( ':' SECOND ( SECOND_DEC_SEP DIGIT+ )?)? | HOUR ':' MINUTE ':' UNKNOWN_DT | HOUR ':' UNKNOWN_DT ':' UNKNOWN_DT ) TIMEZONE? ;
 ISO8601_DATE_TIME : ( YEAR '-' MONTH '-' DAY 'T' HOUR (':' MINUTE (':' SECOND ( SECOND_DEC_SEP DIGIT+ )?)?)? | YEAR '-' MONTH '-' DAY 'T' HOUR ':' MINUTE ':' UNKNOWN_DT | YEAR '-' MONTH '-' DAY 'T' HOUR ':' UNKNOWN_DT ':' UNKNOWN_DT ) TIMEZONE? ;
-fragment TIMEZONE : 'Z' | ('+'|'-') HOUR_MIN ;   // hour offset, e.g. `+0930`, or else literal `Z` indicating +0000.
+fragment TIMEZONE : 'Z' | ('+'|'-') TZ_HOUR ( ':'? MINUTE )? ;   // hour offset, e.g. `+09:30`, `+0930` or `+09`, or else literal `Z` indicating +0000.
 fragment YEAR     : [0-9][0-9][0-9][0-9] ;		   // Year in ISO8601:2004 is 4 digits with 0-filling as needed
 fragment MONTH    : ( [0][1-9] | [1][0-2] ) ;    // month in year
 fragment DAY      : ( [0][1-9] | [12][0-9] | [3][0-1] ) ;  // day in month
 fragment HOUR     : ( [01]?[0-9] | [2][0-3] ) ;  // hour in 24 hour clock
 fragment MINUTE   : [0-5][0-9] ;                 // minutes
-fragment HOUR_MIN : ( [01]?[0-9] | [2][0-3] ) [0-5][0-9] ;  // hour / minutes quad digit pattern
+fragment TZ_HOUR  : [01][0-9] | [2][0-3] ;      // timezone hour offset, always two digits
 fragment SECOND   : [0-5][0-9] ;                 // seconds
 fragment SECOND_DEC_SEP : '.' | ',' ;
 fragment UNKNOWN_DT  : '??' ;                    // any unknown date/time value, except years.
